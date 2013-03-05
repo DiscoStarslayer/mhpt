@@ -108,7 +108,7 @@ int main()
 	}
 
 	const char * autoDevice = cmd.getSetting("AutoDevice");
-	if (std::strcmp(autoDevice, "false") != 0) {
+	if (strcmp(autoDevice, "false") != 0) {
 		cmd.execute("/opendevice");
 		while (GetAdapterStatus()==0) {
 
@@ -119,7 +119,7 @@ int main()
 			printf("0. 無線インターフェイスを使用しない(チャットのみ)\n");
 			while (device != NULL) {
 				deviceName[deviceNum] = (char *)malloc(sizeof(device) + 1);
-				std::strcpy(deviceName[deviceNum], device);
+				strcpy(deviceName[deviceNum], device);
 				deviceNum++;
 				device = cmd.nextResult();
 			}
@@ -162,8 +162,8 @@ int main()
 //	printf("自分がサーバーになるには、/openserver [ポート番号] と入力してください。\n");
 	
 	const char * autoConnect = cmd.getSetting("AutoConnect");
-	if (std::strcmp(autoConnect, "false") != 0) {
-		if (std::strcmp(cmd.getSetting("Server"), "")!=0) {
+	if (strcmp(autoConnect, "false") != 0) {
+		if (strcmp(cmd.getSetting("Server"), "")!=0) {
 			cmd.execute("/connect");
 		}
 		while (GetClientStatus() == 0) {
@@ -182,9 +182,9 @@ int main()
 	while (1) {
 		fgets( acReadBuffer, sizeof(acReadBuffer) , stdin );  /* 標準入力から入力 */
 		acReadBuffer[strlen(acReadBuffer) - 1] = 0;
-		if (std::strcmp(acReadBuffer, "/exit") == 0) {
+		if (strcmp(acReadBuffer, "/exit") == 0) {
 			break;
-		} else if (std::strcmp(acReadBuffer, "/logout") == 0) {
+		} else if (strcmp(acReadBuffer, "/logout") == 0) {
 			break;
 		} else {
 			cmd.execute(acReadBuffer);

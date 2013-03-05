@@ -1663,15 +1663,15 @@ object MHPTunnelForm: TMHPTunnelForm
     AutoHint = True
     Panels = <
       item
-        Text = '???????'
+        Text = #12469#12540#12496#12540#26410#25509#32154
         Width = 150
       end
       item
-        Text = '???????'
+        Text = #12487#12496#12452#12473#26410#25509#32154
         Width = 150
       end
       item
-        Text = 'PSP???'
+        Text = 'PSP'#26410#25509#32154
         Width = 50
       end>
     SimplePanel = True
@@ -1695,7 +1695,7 @@ object MHPTunnelForm: TMHPTunnelForm
       Width = 65
       Height = 24
       Align = alRight
-      Caption = '??'
+      Caption = #36865#20449
       Default = True
       TabOrder = 0
       OnClick = ButtonSendClick
@@ -1717,6 +1717,7 @@ object MHPTunnelForm: TMHPTunnelForm
       OnKeyDown = CommandBoxKeyDown
       OnKeyPress = CommandBoxKeyPress
       OnKeyUp = CommandBoxKeyUp
+      ExplicitHeight = 21
     end
   end
   object InfoPanel: TPanel
@@ -1747,7 +1748,7 @@ object MHPTunnelForm: TMHPTunnelForm
       Align = alTop
       Columns = <
         item
-          Caption = '??????'
+          Caption = #12491#12483#12463#12493#12540#12512
           Width = 100
         end
         item
@@ -1779,7 +1780,7 @@ object MHPTunnelForm: TMHPTunnelForm
           Width = 100
         end
         item
-          Caption = '???'
+          Caption = #12456#12522#12450
           Width = 70
         end>
       Font.Charset = SHIFTJIS_CHARSET
@@ -1841,48 +1842,48 @@ object MHPTunnelForm: TMHPTunnelForm
     Left = 8
     Top = 152
     object MenuConnect: TMenuItem
-      Caption = '??(&C)'
+      Caption = #25509#32154'(&C)'
       object MenuConnectArena: TMenuItem
-        Caption = '???????(&A)'
+        Caption = #12469#12540#12496#12540#12395#25509#32154'(&A)'
         OnClick = MenuConnectArenaClick
       end
       object MenuDisconnect: TMenuItem
-        Caption = '??(&D)'
+        Caption = #20999#26029'(&D)'
         OnClick = MenuDisconnectClick
       end
       object MenuSep1: TMenuItem
         Caption = '-'
       end
       object MenuQuit: TMenuItem
-        Caption = '??(&Q)'
+        Caption = #32066#20102'(&Q)'
         OnClick = MenuQuitClick
       end
     end
     object MenuSetting: TMenuItem
-      Caption = '??(&S)'
+      Caption = #35373#23450'(&S)'
       object MenuSettingUser: TMenuItem
-        Caption = '??????(&U)'
+        Caption = #12518#12540#12470#12540#35373#23450'(&U)'
         OnClick = MenuSettingUserClick
       end
       object MenuSep2: TMenuItem
         Caption = '-'
       end
       object MenuClearConsole: TMenuItem
-        Caption = '?????????(&X)'
+        Caption = #12467#12531#12477#12540#12523#12398#12463#12522#12450'(&X)'
         OnClick = MenuClearConsoleClick
       end
     end
     object MenuHelp: TMenuItem
-      Caption = '???(&H)'
+      Caption = #12504#12523#12503'(&H)'
       object MenuOnlineManual: TMenuItem
-        Caption = '??????????(&W)'
+        Caption = #12458#12531#12521#12452#12531#12510#12491#12517#12450#12523'(&W)'
         OnClick = MenuOnlineManualClick
       end
       object MenuSep3: TMenuItem
         Caption = '-'
       end
       object MenuVersion: TMenuItem
-        Caption = '???????(&V)'
+        Caption = #12496#12540#12472#12519#12531#24773#22577'(&V)'
         OnClick = MenuVersionClick
       end
     end
@@ -1893,8 +1894,8 @@ object MHPTunnelForm: TMHPTunnelForm
   end
   object TrayIcon: TTrayIcon
     Hint = 'MHP Tunnel'
-    BalloonHint = '???????'
-    BalloonTitle = '????'
+    BalloonHint = #12496#12523#12540#12531#12498#12531#12488
+    BalloonTitle = #12496#12523#12540#12531
     BalloonFlags = bfInfo
     Icon.Data = {
       0000010001001010000001002000680400001600000028000000100000002000
@@ -2089,15 +2090,15 @@ object MHPTunnelForm: TMHPTunnelForm
     Left = 248
     Top = 152
     object PopupCopy: TMenuItem
-      Caption = '???(&C)'
+      Caption = #12467#12500#12540'(&C)'
       OnClick = PopupCopyClick
     end
     object PopupPaste: TMenuItem
-      Caption = '????(&P)'
+      Caption = #36028#12426#20184#12369'(&P)'
       OnClick = PopupPasteClick
     end
     object PopupPasteHTML: TMenuItem
-      Caption = 'HTML????(&H)'
+      Caption = 'HTML'#36028#12426#20184#12369'(&H)'
       OnClick = PopupPasteHTMLClick
     end
   end

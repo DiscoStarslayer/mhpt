@@ -391,7 +391,7 @@ void __fastcall TMHPTunnelForm::MenuClearConsoleClick(TObject *Sender)
 	VARIANT *variant;
 	SafeArrayAccessData(safe_array,(void **)&variant);
 	variant->vt      = VT_BSTR;
-	variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+	variant->bstrVal = SysAllocString(WideString(Str));
 	SafeArrayUnaccessData(safe_array);
 	IHTMLDocument2  *Html=NULL;
 	this->WebBrowser->Navigate(L"about:blank");
@@ -457,7 +457,7 @@ void __fastcall TMHPTunnelForm::Button2Click(TObject *Sender)
 
   SafeArrayAccessData(safe_array,(void **)&variant);
   variant->vt      = VT_BSTR;
-  variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+  variant->bstrVal = SysAllocString(WideString(Str));
   SafeArrayUnaccessData(safe_array);
 
   IHTMLDocument2 *Html=NULL;

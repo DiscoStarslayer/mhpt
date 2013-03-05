@@ -134,7 +134,7 @@ void TMHPTunnelForm::clearConsole()
 		Html=NULL;
 		SafeArrayAccessData(safe_array,(void **)&variant);
 		variant->vt      = VT_BSTR;
-		variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+		variant->bstrVal = SysAllocString(WideString(Str));
 		SafeArrayUnaccessData(safe_array);
 		this->WebBrowser->Navigate(L"about:blank");
 		this->WebBrowser->Document->QueryInterface(IID_IHTMLDocument2,(void **)&Html);
@@ -177,7 +177,7 @@ void TMHPTunnelForm::addLine(const char * color, const char * text)
 		safe_array = SafeArrayCreateVector(VT_VARIANT, 0, 1);
 		SafeArrayAccessData(safe_array,(void **)&variant);
 		variant->vt      = VT_BSTR;
-		variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+		variant->bstrVal = SysAllocString(WideString(Str));
 		SafeArrayUnaccessData(safe_array);
 		Html=NULL;
 		this->WebBrowser->Document->QueryInterface(IID_IHTMLDocument2,(void **)&Html);
@@ -391,7 +391,7 @@ void __fastcall TMHPTunnelForm::MenuClearConsoleClick(TObject *Sender)
 	VARIANT *variant;
 	SafeArrayAccessData(safe_array,(void **)&variant);
 	variant->vt      = VT_BSTR;
-	variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+	variant->bstrVal = SysAllocString(WideString(Str));
 	SafeArrayUnaccessData(safe_array);
 	IHTMLDocument2  *Html=NULL;
 	this->WebBrowser->Navigate(L"about:blank");
@@ -457,7 +457,7 @@ void __fastcall TMHPTunnelForm::Button2Click(TObject *Sender)
 
   SafeArrayAccessData(safe_array,(void **)&variant);
   variant->vt      = VT_BSTR;
-  variant->bstrVal = SysAllocString(WideString(Str).c_bstr());
+  variant->bstrVal = SysAllocString(WideString(Str));
   SafeArrayUnaccessData(safe_array);
 
   IHTMLDocument2 *Html=NULL;
