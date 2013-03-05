@@ -1,0 +1,12 @@
+LIBRARY     TUNNEL.DLL
+
+EXPORTS
+    FreeCommandResult              @1   ; FreeCommandResult
+    GetAdapterStatus               @7   ; GetAdapterStatus
+    GetClientStatus                @8   ; GetClientStatus
+    GetConsoleLog                  @3   ; GetConsoleLog
+    GetConsoleLogText              @4   ; GetConsoleLogText
+    SetClientLogHandler            @5   ; SetClientLogHandler
+    TextCommand                    @6   ; TextCommand
+    UseConsoleEvent                @2   ; UseConsoleEvent
+    ___CPPdebugHook                @9   ; ___CPPdebugHook
