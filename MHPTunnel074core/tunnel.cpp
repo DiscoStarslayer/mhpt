@@ -2,30 +2,30 @@
 
 #include <windows.h>
 //---------------------------------------------------------------------------
-//   以下は、共有 RTL DLL を使わない DLL を作成する場合のメモリ管理に
-//   関する注意です
+// The following are the memory management when you create a DLL that does not use shared RTL DLL
+// It is a note about
 //
-//   パラメータや戻り値として AnsiString（及び AnsiString を含む構造体/
-//   クラス）を扱う関数を DLL からエクスポートする場合、その DLL と、DLL
-//   を使うプロジェクトの両方に MEMMGR.LIB ライブラリを追加する必要が
-//   あります。
+// Structure that contains and AnsiString (AnsiString as parameters and return values ??/
+// If you want to export from the DLL functions to handle the class), and that DLL, DLL
+// You need to add the library to both MEMMGR.LIB project to use
+// Some.
 //
-//   DLL からエクスポートされた、TObject から派生されていないクラスに
-//   対して new または delete を使う場合にも MEMMGR.LIB を追加しなけれ
-//   ばなりません。
+// Has been exported from a DLL, the class that is not derived from TObject
+// Do not add MEMMGR.LIB even if you use new or delete for
+// I must.
 //
-//   MEMMGR.LIB を追加することにより、DLL と DLL を参照する EXE が共
-//   通のメモリマネージャを使うようになります。メモリマネージャは BORLNDMM.DLL
-//   として提供されます。DLL またはアプリケーションとともに配布して
-//   ください。
+// By adding MEMMGR.LIB, EXE that references the DLL and the DLL is both
+// I would like to use the memory manager of the communication. The memory manager BORLNDMM.DLL
+// Are provided as. DLL or to distribute with your application
+// Please.
 //
-//   BORLNDMM.DLL が使われるのを避けるには、AnsiString 型の代わりに
-//   "char *" または ShortString 型を使って文字列のやり取りをおこなっ
-//   てください
+// To avoid BORLNDMM.DLL from being used, instead of the AnsiString type
+// Perform the interaction of the string using a ShortString or type "char *"
+// Please
 //
-//   作成する DLL が共有 RTL DLL を使う場合には、RTL の方で MEMMGR.LIB
-//   をライブラリとして追加するため DLL プロジェクトに明示的に追加す
-//   る必要はありません。
+// If the DLL that you create using the RTL DLL shared, MEMMGR.LIB Toward the RTL
+// Explicitly added to the DLL project as a library for adding
+// Does not need to.
 //---------------------------------------------------------------------------
 
 #pragma argsused

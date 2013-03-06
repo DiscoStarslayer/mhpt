@@ -13,20 +13,20 @@ typedef unsigned short WORD;
 typedef unsigned long DWORD;
 typedef unsigned __int64 QWORD;
 
-//#define CDECL __cdecl   // VCの場合はこの行を定義
-#define CDECL           // VC以外の場合はこの行を定義するか、適宜定義し直す
+//#define CDECL __cdecl   // If this line of definition VC
+#define CDECL           // Otherwise VC either defined this line, redefine as appropriate
 
 // ROTATE
-//#define ROTATE_L32(x,n)     ( _rotl(x,n) )  // _rotl()が使える場合はこちらを優先
-//#define ROTATE_R32(x,n)     ( _rotr(x,n) )  // _rotr()が使える場合はこちらを優先
-#define ROTATE_L32(x,n)     ( ((x) << (n)) | ((x) >> (32 - (n))) )  // _rotl()が使えない場合はこちらを使う
-#define ROTATE_R32(x,n)     ( ((x) >> (n)) | ((x) << (32 - (n))) )  // _rotr()が使えない場合はこちらを使う
+//#define ROTATE_L32(x,n)     ( _rotl(x,n) )  // If you can () _rotl has priority here
+//#define ROTATE_R32(x,n)     ( _rotr(x,n) )  // If you can () _rotr has priority here
+#define ROTATE_L32(x,n)     ( ((x) << (n)) | ((x) >> (32 - (n))) )  // If you can not use () is used here _rotl
+#define ROTATE_R32(x,n)     ( ((x) >> (n)) | ((x) << (32 - (n))) )  // If you can not use () is used here _rotr
 
 
-// ReverseEndianでアセンブラ版を使う場合は1、使わない場合は0
+// ReverseEndian If you use the assembler version in 1 If you do not use 0
 #define USE_REVERSEENDIAN_ASSEMBLER 0
 
-// 各ハッシュでアセンブラ版を使う場合は1、使わない場合は0
+//If you want to use in each hash assembler version 1 If you do not use 0
 #define USE_ASSEMBLER_CRC           0
 #define USE_ASSEMBLER_MD5           0
 #define USE_ASSEMBLER_SHA1          0

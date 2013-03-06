@@ -2,7 +2,7 @@
  * $Id: tunnel-client-cui.cpp,v 1.7 2008/05/18 22:51:13 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルクライアント
+ * Tunnel client for MHP
  */
 #include <iostream>
 #include <string.h>
@@ -26,7 +26,7 @@ int InputFromUser(char* title, char* buffer, int size)
 }
 
 /**
- * コンソールへログ出力
+ * Log output to the console
  */ 
 void TunnelEvent(int eventType, int , const char * logText)
 {
@@ -62,7 +62,7 @@ void TunnelEvent(int eventType, int , const char * logText)
 	}
 }
 
-// ログ監視スレッド
+// Thread log monitoring
 DWORD WINAPI MonitorLog(void *)
 {
 	while (1) {
@@ -116,7 +116,7 @@ int main()
 			TextCommand("/listdevice");
 			const char * device = GetCommandResult();
 	
-			printf("0. 無線インターフェイスを使用しない(チャットのみ)\n");
+			printf("0. Do not use the radio interface (chat only)\n");
 			while (device != NULL) {
 				deviceName[deviceNum] = (char *)malloc(sizeof(device) + 1);
 				strcpy(deviceName[deviceNum], device);
@@ -133,14 +133,14 @@ int main()
 		
 			if(deviceNum > 0)
 			{
-				printf("使用する無線インターフェイスの番号を選択してください (0-%d): ", deviceNum);
+				printf("Please select the number of the interface you want to use wireless (0-%d): ", deviceNum);
 				char strTmp[32];
 				InputFromUser("", strTmp, sizeof(strTmp));
 				sscanf(strTmp, "%d", &inum);
 			
 				if(inum < 0 || inum > deviceNum)
 				{
-					printf("入力値が範囲外です。\n");
+					printf("Input value is out of range.\n");
 					/* Free the device list */
 				} else if (inum == 0) {
 					break;
@@ -150,7 +150,7 @@ int main()
 					TextCommand(command);
 				}
 			} else {
-				printf("無線インターフェイスがありません。チャットモードで起動します。\n");
+				printf("There is no wireless interface. I will start in chat mode.\n");
 				break;
 			}
 		}
@@ -166,7 +166,7 @@ int main()
 		TextCommand("/connect");
 		while (GetClientStatus() == 0) {
 			char szServer[30];
-			InputFromUser("接続先サーバー(アドレス[:ポート]): ", szServer, sizeof(szServer));
+			InputFromUser("The destination server (address [: port])): ", szServer, sizeof(szServer));
 			char szBuffer[512];
 			snprintf(szBuffer, sizeof(szBuffer), "/connect %s", szServer);
 			TextCommand(szBuffer);
@@ -175,10 +175,10 @@ int main()
 
 	TextCommand("/users");
 
-	// コンソール入力開始
+	// Start console input
     char acReadBuffer[4096];
     while (1) {
-		fgets( acReadBuffer, sizeof(acReadBuffer) , stdin );  /* 標準入力から入力 */
+		fgets( acReadBuffer, sizeof(acReadBuffer) , stdin );  /* From standard input */
 		acReadBuffer[strlen(acReadBuffer) - 1] = 0;
 		if (strcmp(acReadBuffer, "/exit") == 0) {
 			break;

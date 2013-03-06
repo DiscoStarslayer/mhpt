@@ -2,7 +2,7 @@
  * $Id: tunnel-client.cpp,v 1.33 2008/06/08 09:53:16 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルクライアント
+ * Tunnel client for MHP
  */
 #define _BITTYPES_H
 #define WIN32
@@ -18,7 +18,7 @@
  * Desired design of maximum size and alignment.
  * These are implementation specific.
  */
-#include "pktOidRequest.h"	// OID リクエスト操作　サポート
+#include "pktOidRequest.h"	// Operation support request OID
 
 #include <time.h>
 
@@ -35,22 +35,22 @@
 const int kBufferSize = 4096;
 #define maxiMacAddr 200
 
-// 集会所から出たかどうかの判定時間
+// Time to determine if it was out of the meeting place
 int roomWait=10000;
 
-// SSIDの自動検索を行うかどうか
+// Whether you perform an automatic search for SSID
 bool ssidAutoSence = false;
 
-// SSIDの自動検索の検索間隔
+// Search interval for automatic search of SSID
 int ssidAutoSenceInterval = 10000;
 
-// PSPの自動検索を行うかどうか
+// Whether you perform an automatic search for PSP
 bool pspAutoSence = false;
 
-// PSPの自動検索の検索間隔
+// Search interval for automatic search of PSP
 int pspAutoSenceInterval = 4000;
 
-// リンクアップを検出するかどうかの判定値
+// Value judgment of whether to detect link up
 int LinkUpDBM = -60;
 
 NDIS_802_11_RSSI Rssi = -200;
@@ -64,13 +64,13 @@ HANDLE ssidMonitorHandle;
 CRITICAL_SECTION pcapSection;
 CRITICAL_SECTION commandSection;
 
-// BSSIDリストスキャンの上限
+// BSSID scan list limit of
 #define	MAX_BSSID				20
 
 pcap_t *adhandle;
 char errbuf[PCAP_ERRBUF_SIZE];
 
-// INI設定内容
+// INI settings
 TCHAR szServer[256];
 TCHAR szPort[10];
 TCHAR szDevice[256];
@@ -81,13 +81,13 @@ TCHAR szNickName[30];
 //	TCHAR szNickName[30];
 //};
 
-// 自分からサーバーにトンネルするMACアドレスのリスト
+// A list of MAC addresses to tunnel to the server from their
 MAC_ADDRESS mac[maxMacAddr];
 
-// トンネルしないMACアドレスのリスト(ループ防止のため)
+// (To prevent loops) a list of MAC addresses that do not tunnel
 MAC_ADDRESS ignoreMac[maxiMacAddr];
 
-// サーバーへの接続
+// The connection to the server
 SOCKET_EX gsd;
 
 u_long nRemoteAddress;
@@ -98,16 +98,16 @@ bool needReconnect = false;
 clock_t last_psp_packet = 0;
 clock_t lastDummyPacket = 0;
 
-// 選択中インターフェースハンドル
+// Handle of the selected interface
 LPADAPTER	m_lpAdapter;
 
-// 選択中のSSID
+// SSID of the selected
 NDIS_802_11_SSID Ssid;
 
-// 選択中の集会所
+// Meeting place of the currently selected
 char room[30];
 
-// BSSIDリスト
+// BSSID list
 NDIS_WLAN_BSSID	m_Bssid[MAX_BSSID];
 
 void packet_handler(u_char *, const struct pcap_pkthdr *header, const u_char *pkt_data);
@@ -305,8 +305,8 @@ CONSOLE_LOG * _stdcall GetConsoleLog()
 	if (console_log == NULL) {
 		return NULL;
 	}
-	// 新しい COMMAND_RESULT は、nextResultに入ってます。
-	// command_result に入ってるのは最後のResultで、これはメモリに保持する必要があります
+// COMMAND_RESULT new, into the nextResult.
+// The Result is no one in the last command_result, which must be kept in memory
 	if (console_log->next == NULL) {
 		return NULL;
 	}
@@ -364,7 +364,7 @@ const char * GetUserId()
 			for (int j = 1; j < i; j++) {
 				RegCloseKey(hkResult[j]);
 			}
-//			printf("126 だめだ、キーがオープンできなかった (i=%d)\n", i);
+//			printf("126 Useless, I could not open key (i=%d)\n", i);
 			return NULL;
 		}
 	}
@@ -380,7 +380,7 @@ const char * GetUserId()
 	    md5->GetHashString(szUserId, TRUE);
     }
 
-	// キーハンドルの開放
+	// Open key handle
 	for (int j = 1; j < 4; j++) {
 		RegCloseKey(hkResult[j]);
 	}
@@ -402,7 +402,7 @@ const char * GetUserIdVista()
 			for (int j = 1; j < i; j++) {
 				RegCloseKey(hkResult[j]);
 			}
-//			printf("126 だめだ、キーがオープンできなかった (i=%d)\n", i);
+//			printf("126 Useless, I could not open key (i=%d)\n", i);
 			return NULL;
 		}
 	}
@@ -418,7 +418,7 @@ const char * GetUserIdVista()
 	    md5->GetHashString(szUserId, TRUE);
     }
 
-	// キーハンドルの開放
+	// Open key handle
 	for (int j = 1; j < 4; j++) {
 		RegCloseKey(hkResult[j]);
 	}
@@ -429,14 +429,14 @@ const char * GetUserIdVista()
 bool GetDeviceDescription(const char * name, char * buffer, int size)
 {
 	//HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkCards
-	//の下に入っているので、それを取得して返す
+	//Since entering the bottom of and return to get it
 	
 	char serviceName[512];
 	strcpy(serviceName, &name[12]);
 
 	// RegOpenKeyEx http://msdn.microsoft.com/ja-jp/library/cc429950.aspx
 	// RegCloseKey  http://msdn.microsoft.com/ja-jp/library/cc429930.aspx
-//	printf("%s の説明をゲットするぜ\n", name);
+//	printf("%s I'll to get a description of the\n", name);
 	HKEY hkResult[7];
 	char * keys[6] = {"SOFTWARE", "Microsoft", "Windows NT", "CurrentVersion", "NetworkCards"};
 	int i;
@@ -446,7 +446,7 @@ bool GetDeviceDescription(const char * name, char * buffer, int size)
 			for (int j = 1; j < i; j++) {
 				RegCloseKey(hkResult[j]);
 			}
-//			printf("126 だめだ、キーがオープンできなかった (i=%d)\n", i);
+//			printf("126 Useless, I could not open key (i=%d)\n", i);
 			return false;
 		}
 	}
@@ -462,7 +462,7 @@ bool GetDeviceDescription(const char * name, char * buffer, int size)
 	DWORD dataSize;
 	bool findIt = false;
 	while (RegEnumKeyEx(hkResult[6], index, subKeyName, &subKeyNameSize, NULL, NULL, NULL, &fileTime) != ERROR_NO_MORE_ITEMS && !findIt) {
-		//printf("キーは: %s\n", subKeyName);
+		//printf("The key: %s\n", subKeyName);
 		HKEY hkSubKey;
 		if (RegOpenKeyEx(hkResult[6], subKeyName, 0, KEY_READ, &hkSubKey) == ERROR_SUCCESS) {
 			dataSize = (DWORD)sizeof(data);
@@ -479,7 +479,7 @@ bool GetDeviceDescription(const char * name, char * buffer, int size)
 		subKeyNameSize = 32;
 		index++;
 	}
-	// キーハンドルの開放
+	// Open key handle
 	for (int j = 1; j < i; j++) {
 		RegCloseKey(hkResult[j]);
 	}
@@ -488,7 +488,7 @@ bool GetDeviceDescription(const char * name, char * buffer, int size)
 
 DWORD WINAPI PacketCapture(void *)  
 {
-	// Sleep(0)しか入れてないけど大丈夫かな・・・
+	// Sleep(0) I wonder if he 's OK I have not only put・・・
 	int ret;
 	const u_char *pkt_data;
 	struct pcap_pkthdr *pkt_header;
@@ -500,9 +500,9 @@ DWORD WINAPI PacketCapture(void *)
 			if(0<=(ret=pcap_next_ex(adhandle,&pkt_header, &pkt_data))){
 //				LeaveCriticalSection(&pcapSection);
 			    if(ret==1){
-			    	//パケットが滞りなく読み込まれた
-			    	// この時点で pkt_header->caplen に
-			        // 受信バイト数 pkt_data に受信したデータが含まれています。
+			    	// Packet was read without a hitch
+					// To pkt_header-> caplen at this time
+					// Contains the data that was received pkt_data number of bytes received.
 				    //PrintClientLog(0, "PacketCapture!!!");
 					packet_handler(NULL, pkt_header, pkt_data);
 					Sleep(0);
@@ -659,7 +659,7 @@ bool OpenDevice(const char * deviceName)
 	//PrintClientLog(0, "無線LANデバイスを初期化しています。");
 	m_lpAdapter = PacketOpenAdapter(device);
 	if (m_lpAdapter == NULL) {
-		callUI(TUNNEL_EVENT_NOTICE, 0, "デバイスをオープンできませんでした。");
+		callUI(TUNNEL_EVENT_NOTICE, 0, "I could not open the device.");
 		adapterStatus = 0;
 		return false;
 	}
@@ -667,14 +667,14 @@ bool OpenDevice(const char * deviceName)
 	pktGet802_11SSID(m_lpAdapter, &Ssid);
 	Sleep(200);
 	
-	// 確立中のネットワークを切断
+	// Disconnect the network being established
 //	pktExec802_11Disassociate(m_lpAdapter);
 //	Sleep(200);
 
 	// Ad-Hook モードへ移行
 	if ( FALSE == EnableAdHook() )
 	{
-		callUI(TUNNEL_EVENT_NOTICE, 0, "アドホックモードに移行できませんでした。");
+		callUI(TUNNEL_EVENT_NOTICE, 0, "I can not be migrated to the ad-hoc mode.");
 		PacketCloseAdapter(m_lpAdapter);
 		adapterStatus = 0;
 		return false;
@@ -686,13 +686,13 @@ bool OpenDevice(const char * deviceName)
 
 	adapterStatus = 2;
 	
-	// パケットキャプチャー開始
+	// Start packet capture
 //    packetCaptureHandle = CreateThread(0, 0, PacketCapture, (void*)&gsd, 0, NULL);
 
-	// SSID監視開始
+	// SSID monitoring start
     ssidMonitorHandle = CreateThread(0, 0, MonitorSSID, NULL, 0, NULL);
     
-	callUI(TUNNEL_EVENT_NOTICE, 0, "デバイスを初期化しました。");
+	callUI(TUNNEL_EVENT_NOTICE, 0, "I have to initialize the device.");
     return true;
 }
 
@@ -721,7 +721,7 @@ void LoadClientSetting()
 	GetSetting(_T("SSIDAutoSenceInterval"), _T("10000"), szTmp, sizeof(szTmp));	
 	SetSetting(_T("SSIDAutoSenceInterval"), szTmp);
 	sscanf(szTmp, "%d", &ssidAutoSenceInterval);
-	// 5秒以下にはできない
+	// I can not do more than 5 seconds
 	if (ssidAutoSenceInterval < 5000) {
 		ssidAutoSenceInterval = 5000;
 	}
@@ -736,7 +736,7 @@ void LoadClientSetting()
 	GetSetting(_T("PSPAutoSenceInterval"), _T("4000"), szTmp, sizeof(szTmp));	
 	SetSetting(_T("PSPAutoSenceInterval"), szTmp);
 	sscanf(szTmp, "%d", &pspAutoSenceInterval);
-	// 1秒以下にはできない
+	// I can not do less than one second
 	if (pspAutoSenceInterval < 1000) {
 		pspAutoSenceInterval = 1000;
 	}
@@ -764,7 +764,7 @@ bool SendSSID(SOCKET_EX * sdex)
 		//pktGet802_11SSID(m_lpAdapter, &Ssid);
 	}
 	
-	// SSID変更通知
+	//Change notification SSID
 	DATA_HEADER dh;
 	USER_INFO ui;
 	ui.last = clock();
@@ -805,7 +805,7 @@ bool SendSSID(SOCKET_EX * sdex)
 }
 
 //
-// PSP向けのアドホック設定を行う
+// To set up ad hoc for PSP
 //
 bool EnableAdHook()
 {
@@ -813,17 +813,17 @@ bool EnableAdHook()
 	//	return false;
 	//Sleep(200);
 
-	// Ad-Hook ネットワークへ切り替え
+	// Switch to Ad-Hook Network
     if (!pktSet802_11NetworkMode(m_lpAdapter, Ndis802_11IBSS))
 		return false;
 	Sleep(200);
 
-	// WEPを無効化
+	// Disable the WEP
     if (!pktSet802_11WEPStatus(m_lpAdapter, Ndis802_11WEPDisabled))
 		return false;
 	Sleep(200);
 
-	//　オープン認証へ切り替え
+	//　Switch to Open Authentication
     if (!pktSet802_11AuthMode(m_lpAdapter, Ndis802_11AuthModeOpen))
 		return false;
 	Sleep(200);
@@ -832,18 +832,18 @@ bool EnableAdHook()
 }
 
 /**
- * 設定ファイルを読み込む
+ * Reads the configuration file
  */ 
 bool GetSSIDSetting(char* key, char* buffer, int size)
 {
 	char	cur[512];
 	TCHAR	* fileName = "ini";
 	if ( GetModuleFileName(NULL, cur, sizeof(cur)) == 0 ) {
-		// エラー
+		// Error
 	}
 	strcpy(&cur[strlen(cur) - 3], fileName);
 	
-	// デフォルトはSSID
+	// The default SSID
 	GetPrivateProfileString( 
 		_T("SSID") , key , key ,
 		buffer , size , cur );
@@ -856,18 +856,18 @@ bool GetSSIDSetting(char* key, char* buffer, int size)
 }
 
 /**
- * 設定ファイルを読み込む
+ * Reads the configuration file
  */ 
 bool GetMACSetting(MAC_ADDRESS * mac, char* buffer, int size)
 {
 	char	cur[512];
 	TCHAR	* fileName = "ini";
 	if ( GetModuleFileName(NULL, cur, sizeof(cur)) == 0 ) {
-		// エラー
+		// Error
 	}
 	strcpy(&cur[strlen(cur) - 3], fileName);
 
-	// デフォルトはMACアドレス
+	// The default MAC address
 	char tmp[10];
 	int itmp = 0;
 	GetPrivateProfileString( 
@@ -886,7 +886,7 @@ bool GetMACSetting(MAC_ADDRESS * mac, char* buffer, int size)
 	}
 	char * notfound = "!NOTFOUND!";
 	
-	// デフォルトはMACアドレス
+	// The default MAC address
 	GetPrivateProfileString( 
 		_T("MAC") , key , notfound ,
 		buffer , size , cur );
@@ -910,7 +910,7 @@ bool GetMACSetting(MAC_ADDRESS * mac, char* buffer, int size)
 
 bool inTheRoom = false;
 
-// SSID監視スレッド
+// SSID monitor thread
 DWORD WINAPI MonitorSSID(void *)
 {
 //	DATA_HEADER dh;
@@ -1051,23 +1051,23 @@ DWORD WINAPI MonitorSSID(void *)
 							NDIS_802_11_CONFIGURATION Config;
 							if ( FALSE == pktGet802_11Configuration(m_lpAdapter, &Config) )
 							{
-								printf("pktGet802_11Configuration失敗 \n");
+								printf("pktGet802_11Configuration Failure \n");
 								LeaveCriticalSection(&pcapSection);
-								break; // 失敗
+								break; // Failure
 							}
 	
 							Config.DSConfig = m_Bssid[i].Configuration.DSConfig;
 							memcpy(&Config, &m_Bssid[i].Configuration, sizeof(NDIS_802_11_CONFIGURATION));
 							if ( FALSE == pktSet802_11Configuration(m_lpAdapter, &Config) )
 							{
-								snprintf(pb, sizeof(pb), "%s に移動 pktSet802_11Configuration2失敗", name);
+								snprintf(pb, sizeof(pb), "%s (Go to the pktSet802_11Configuration2 Failure", name);
 								callUI(TUNNEL_EVENT_NOTICE, 0, pb);
-								//break; // 失敗
+								//break; // Failure
 							}
 							
 							Sleep(200);
 	
-							// 新しいSSIDを適用
+							// Apply the new SSID
 							if ( TRUE == pktSet802_11SSID(m_lpAdapter, &m_Bssid[i].Ssid))
 							{
 								ZeroMemory(&Ssid, sizeof(NDIS_802_11_SSID));
@@ -1092,7 +1092,7 @@ DWORD WINAPI MonitorSSID(void *)
 //								Sleep(roomWait);
 							} else {
 								LeaveCriticalSection(&pcapSection);
-								snprintf(pb, sizeof(pb), "pktSet802_11SSID失敗");
+								snprintf(pb, sizeof(pb), "pktSet802_11SSID Failure");
 								callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 							}
 							
@@ -1102,7 +1102,7 @@ DWORD WINAPI MonitorSSID(void *)
 //								printf("pktGet802_11SSID失敗 \n");
 //							}
 //							Sleep(ssidAutoSenceInterval);
-							break; // 変更したのでこれ以上比較しない
+							break; // I do not compare any more since the change
 						} else {
 //							printf("%s は INI にない\n", buf);
 						}
@@ -1112,11 +1112,11 @@ DWORD WINAPI MonitorSSID(void *)
 
 	
 			} else {
-				SendChat(&gsd, "pktExec802_11BSSIDScan 失敗");
+				SendChat(&gsd, "pktExec802_11BSSIDScan Failure");
 				PacketCloseAdapter(m_lpAdapter);
 				Sleep(10);
 				m_lpAdapter = PacketOpenAdapter(szDevice);				
-//				printf("pktExec802_11BSSIDScan 失敗\n");
+//				printf("pktExec802_11BSSIDScan Failure\n");
 			}
 		} else {
 			Sleep(1000);
@@ -1126,10 +1126,10 @@ DWORD WINAPI MonitorSSID(void *)
 }
 
 /**
- * 受信したパケットを処理するコールバック関数
- * sdex - 通信内容
- * dh - 受信データヘッダ
- * data - 受信データ
+* Callback function to process the received packet
+? * Sdex - communication content
+? * Dh - data received header
+? * Data - data reception
  */
 void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * data)
 {
@@ -1140,7 +1140,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 	//printf("%d から '%c'コマンド (%d バイト) 受信。\n", (int)dh.doption, dh.dtype, (int)dh.dsize);
 	if (dh->dtype == 't') {
 
-		// Type が 88 C8 なら、自動で4台まで認識する
+		// If Type is 88 C8, automatically recognize up to 4
 		int findMac = -1;
 		for (int i = 0; i < maxiMacAddr; i++) {
 //			if (ignoreMac[i].last_clock + pspAutoSenceInterval > clock()) {
@@ -1203,7 +1203,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 
 	} else if (dh->dtype == 'u') {
 
-		// ユーザー確認コマンドに対する応答
+		// Response to the command user confirmation
 		USER_INFO ui;
 		memcpy(&ui.last, data, sizeof(clock_t));
 		strcpy(ui.szNickName, szNickName);
@@ -1220,7 +1220,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 
 	} else if (dh->dtype == 'i') {
 
-		// ユーザー確認コマンドの結果受信
+		// Receiving the results of the command user confirmation
 		USER_INFO ui;
 		memcpy(&ui, data, sizeof(USER_INFO));
 		clock_t now = clock();
@@ -1232,7 +1232,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 
 	} else if (dh->dtype == 'a') {
 
-		// ユーザー確認コマンドの結果受信
+		// Receiving the results of the command user confirmation
 		USER_INFO * ui = (USER_INFO *)data;
 		int count = (int)dh->doption;
 
@@ -1249,28 +1249,28 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 			bool find = false;
 			for (int c = 0; c < maxUsers; c++) {
 				if (user_active[c]) {
-					// プロセスID比較
+					// Comparison process ID
 					if (ui[i].pid == users[c].pid) {
-						// プロダクトID比較
+						// Compare product ID
 						if (strcmp(ui[i].szUID,users[c].szUID) == 0) {
-							// 同一だと判明
-							// SSID比較 はしない
+							// Turn out to be the same
+							// SSID does not compare
 
-							// PSPの台数比較
+							// Comparing the number of PSP
 							if (ui[i].pspCount != users[c].pspCount) {
-								// 台数が変わった
+								// Number has changed
 								if (ui[i].pspCount == 0) {
-									// 台数が 0 になった
-									// つまり集会所から出た
+									// Number reaches 0
+									// Came out of the meeting place that is
 									char roomName[50];
 									if (GetSSIDSetting(users[c].szSSID, roomName, sizeof(roomName))) {
-										snprintf(pb, sizeof(pb), "%s が %s から出ました", ui[i].szNickName, roomName);
+										snprintf(pb, sizeof(pb), "%s The %s I came out of the", ui[i].szNickName, roomName);
 										callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 									}
 								} else if (users[c].pspCount == 0) {
 									char roomName[50];
 									if (GetSSIDSetting(ui[i].szSSID, roomName, sizeof(roomName))) {
-										snprintf(pb, sizeof(pb), "%s が %s に入りました", ui[i].szNickName, roomName);
+										snprintf(pb, sizeof(pb), "%s The %s I went into the", ui[i].szNickName, roomName);
 										callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 									}
 								}
@@ -1290,7 +1290,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 						memcpy(&users[c], &ui[i], sizeof(USER_INFO));
 						logout[c] = false;
 						user_active[c] = true;
-						snprintf(pb, sizeof(pb), "%s がログインしました", ui[i].szNickName);
+						snprintf(pb, sizeof(pb), "%s I have logged the", ui[i].szNickName);
 						callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 						break;
 					}
@@ -1299,7 +1299,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 		}
 		for (int i = 0; i < maxUsers; i++) {
 			if (logout[i]) {
-				snprintf(pb, sizeof(pb), "%s がログアウトしました", users[i].szNickName);
+				snprintf(pb, sizeof(pb), "%s I have to log out is", users[i].szNickName);
 				callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 				user_active[i] = false;
 			}
@@ -1307,7 +1307,7 @@ void doClientCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * dat
 		callUI(TUNNEL_EVENT_ENTERUSER, 0, "");
 
 	} else {
-		snprintf(pb, sizeof(pb), "サポート外のコマンド'%c'(%d バイト)\n", dh->dtype, (int)dh->dsize);
+		snprintf(pb, sizeof(pb), "Command not supported'%c'(%d Byte)\n", dh->dtype, (int)dh->dsize);
 		callUI(TUNNEL_EVENT_NOTICE, 0, pb);
 		CloseConnection(sdex);
 	}
@@ -1320,13 +1320,13 @@ void doClientClose(SOCKET_EX *)
 		return;
 	}
 	do {
-		// 切断時の処理
+		// Processing at the time of cutting
 		if (gsd.state != STATE_WAITTOCONNECT) {
 //			printf("再接続します...\n");
 		}
 	    //gsd = EstablishConnection(&gsd, nRemoteAddress, htons(nPort));
 	    if (!EstablishConnection(&gsd, nRemoteAddress, htons(nPort))) {
-//	        cerr << WSAGetLastErrorMessage("再接続失敗。") << 
+//	        cerr << WSAGetLastErrorMessage("Reconnection failure.") << 
 //	                endl;
 		} else {
 	    	SendSSID(&gsd);
@@ -1340,7 +1340,7 @@ void doClientConnect(SOCKET_EX * sdex)
     needReconnect = true;
 	clientStatus = 2;
 
-	// SSIDの変更通知
+	// SSID change notification
 	SendSSID(sdex);
 }
 
@@ -1366,39 +1366,39 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 	
 	} else if (strcmp(acReadBuffer, "/help") == 0) {
 		
-		// Helpコマンド
-		callUI(TUNNEL_EVENT_NOTICE, 2,"一般コマンド------------");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/status            現在のステータス表示");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/help              コマンド一覧");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/exit              プログラム終了");
+		// Help command
+		callUI(TUNNEL_EVENT_NOTICE, 2,"------------ Command general");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/status           View current status of");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/help              List of commands");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/exit              The end of the program");
 		callUI(TUNNEL_EVENT_NOTICE, 2,"");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"アリーナコマンド--------");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/say [コメント]                サーバー(アリーナ)全体に発言");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/party [コメント]              同じ集会所にいるメンバーにのみ発言");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/tell [対象] [コメント]        指定したユーザーに発言");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/users                         ログイン中のユーザーとPing一覧を表示");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/connect [サーバー名[:ポート]] サーバー(アリーナ)に接続");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/close                         サーバー(アリーナ)から切断");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/opendevice [デバイス名]       無線アダプタを経由してPSPに接続");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/devicedesc [デバイス名]       無線アダプタの説明文を表示");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/listdevice                    無線アダプタの一覧を表示");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/closedevice                   無線アダプタを切断");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"Command Arena --------");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/say [Comment]                Remarks to the entire (Arena) server");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/party [Comment]              Remark only to members who are in the same meeting place");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/tell [Target] [Comment]        Remarks to the specified user");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/users                         Displays a list of logged-in users and Ping");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/connect Connected to the (arena) server: [port] server name []");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/close                         Disconnected from the (arena) server");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/opendevice [デバイス名]       Connected to the PSP via a wireless adapter");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/devicedesc [デバイス名]       Displays the description of the wireless adapter");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/listdevice                    Displays a list of wireless adapters");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/closedevice                   Disconnect the wireless adapter");
 		callUI(TUNNEL_EVENT_NOTICE, 2,"");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"その他設定--------------");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSence true             SSIDの自動検索を有効にする");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSence false            SSIDの自動検索を無効にする(デフォルト)");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSenceInterval [ミリ秒] SSIDの自動検索の更新間隔を設定");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSence true              PSPの自動検索を有効にする(デフォルト)");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSence false             PSPの自動検索を無効にする");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSenceInterval [ミリ秒]  PSPの自動検索の検索間隔を設定");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set debug true                     デバッグ出力を行う");
-		callUI(TUNNEL_EVENT_NOTICE, 2,"/set debug false                    デバッグ出力を行わない(デフォルト)");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"-------------- Other Settings");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSence true             Enable the automatic search of SSID");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSence false            To disable the automatic search of the SSID (default)");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set SSIDAutoSenceInterval [Millisecond] Set the update interval for automatic search of SSID");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSence true              Enable the automatic search of PSP (the default)");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSence false             To disable the automatic search for PSP");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set PSPAutoSenceInterval [Millisecond]  Sets the interval for automatic search is PSP");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set debug true                     Debugging output");
+		callUI(TUNNEL_EVENT_NOTICE, 2,"/set debug false                    No debug output (default)");
 
 	} else if (strcmp(acReadBuffer, "/u") == 0) {
 		
 		if (clientStatus > 1) {
 
-			// Usersコマンド
+			// Users command
 			for (int i = 0; i < maxUsers; i++) {
 				if (user_active[i]) {
 					char roomName[50];
@@ -1416,7 +1416,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 		char uid[50];
 		sscanf(acReadBuffer, "/userinfo %s", uid);
 
-		// userinfoコマンド
+		// userinfo command
 		for (int i = 0; i < maxUsers; i++) {
 			char tmp[50];
 			snprintf(tmp, sizeof(tmp), "%s:%d", users[i].szUID, users[i].pid);
@@ -1448,7 +1448,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 
 	} else if (strcmp(acReadBuffer, "/users") == 0) {
 		
-		// Usersコマンド
+		// Users command
 		int count = 0;
 		for (int i = 0; i < maxUsers; i++) {
 			if (user_active[i]) {
@@ -1465,7 +1465,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 
 	} else if (strcmp(acReadBuffer, "/usersold") == 0) {
 		
-		// Usersコマンド
+		// Users Command
 
 		clock_t pingClock = clock();
 		char sendData[sizeof(clock_t)];
@@ -1479,7 +1479,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 
 	} else if (strcmp(acReadBuffer, "/dump") == 0) {
 		
-		// Dumpコマンド
+		// Dump command
 		char sendData[10];
 		
 		dh.dtype = 'C';
@@ -1490,26 +1490,26 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 	} else if (memcmp(acReadBuffer, "/tell ", 6) == 0 || memcmp(acReadBuffer, "/t ", 3) == 0) {
 		
 		if (clientStatus > 1) {
-			// Tellコマンド
+			// Tell command
 			dh.dtype = 'D';
 			dh.dsize = strlen(acReadBuffer);
 			
 			SendCommand(sdex, &dh, acReadBuffer);
 		} else {
-			snprintf(pb, sizeof(pb), "アリーナに接続していません");
+			snprintf(pb, sizeof(pb), "I'm not connected to the arena");
 			callUI(TUNNEL_EVENT_ERROR, 0, pb);
 		}
 
 	} else if (memcmp(acReadBuffer, "/party ", 7) == 0 || memcmp(acReadBuffer, "/p ", 3) == 0) {
 		
 		if (clientStatus > 1) {
-			// Partyコマンド
+			// Party command
 			dh.dtype = 'Y';
 			dh.dsize = (short)strlen(acReadBuffer);
 			
 			SendCommand(sdex, &dh, acReadBuffer);
 		} else {
-			snprintf(pb, sizeof(pb), "アリーナに接続していません");
+			snprintf(pb, sizeof(pb), "I'm not connected to the arena");
 			callUI(TUNNEL_EVENT_ERROR, 0, pb);
 		}
 
@@ -1533,7 +1533,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 			} else if (strcmp(value, "false")) {
 				//UseSSIDFilter(false);
 			} else {
-				snprintf(pb, sizeof(pb), "無効なオプション:%s true もしくは false を指定してください。",value);
+				snprintf(pb, sizeof(pb), "Invalid option:%s true Or false Please specify the",value);
 				callUI(TUNNEL_EVENT_ERROR, 0, pb);
 			}
 		}
@@ -1560,7 +1560,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 	} else if (strcmp(acReadBuffer, "/closedevice") == 0) {
 		
 		if (CloseDevice()) {
-			callUI(TUNNEL_EVENT_NOTICE, 0, "デバイス接続を閉じました。");
+			callUI(TUNNEL_EVENT_NOTICE, 0, "I closed the connection device.");
 		}
 		
 	} else if (memcmp(acReadBuffer, "/test", 5) == 0) {
@@ -1587,7 +1587,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 			snprintf(buffer, sizeof(buffer), "Rssi : %d", Rssi);
 			AddCommandResult(&result, buffer);
 		} else {
-			AddCommandResult(&result, "デバイス未接続");
+			AddCommandResult(&result, "Device not connected");
 		}
 		
 	} else if (strcmp(acReadBuffer, "/version") == 0) {
@@ -1630,20 +1630,20 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 		char szOutput[_MAX_PATH * 5 + 1024];
 		DWORD dwRet;
 		
-		//初期化
+		//Initialization
 		memset(szPath, 0x00, sizeof(szPath));
 		memset(szDrive, 0x00, sizeof(szDrive));
 		memset(szDir, 0x00, sizeof(szDir));
 		memset(szExt, 0x00, sizeof(szExt));
 		memset(szOutput, 0x00, sizeof(szOutput));
 			
-		//実行中のプロセスのフルパス名を取得する
+		//Gets the full path name of a running process
 		dwRet = GetModuleFileName(NULL, szPath, sizeof(szPath));
 		if(dwRet == 0) {
 			
 		}
 			
-		//フルパス名を分割する
+		//Split the full path name
 		_splitpath(szPath, szDrive, szDir, szFileName, szExt);
 		
 		TCHAR	fileName[512];
@@ -1656,16 +1656,16 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 		wsprintf(comLine,"\"%s%s%s\" %d", szDrive, szDir, szProgName, port);		
 		
 		bool result = CreateProcess(
-		  fileName,                 // 実行可能モジュールの名前
-		  comLine,                      // コマンドラインの文字列
-		  NULL, // セキュリティ記述子
-		  NULL,  // セキュリティ記述子
-		  TRUE ,                      // ハンドルの継承オプション
-		  CREATE_NO_WINDOW,                     // 作成のフラグ
-		  NULL,                      // 新しい環境ブロック
-		  NULL,                // カレントディレクトリの名前
-		  &sinfo,  // スタートアップ情報
-		  &pinfo // プロセス情報
+		  fileName,                 // The name of the executable module
+		  comLine,                      // String of command-line
+		  NULL, // Security descriptor
+		  NULL,  // Security descriptor
+		  TRUE ,                      // Handle inheritance option
+		  CREATE_NO_WINDOW,                     // Flag of creating
+		  NULL,                      // New environment block
+		  NULL,                // The name of the current directory
+		  &sinfo,  // Startup information
+		  &pinfo // Process information
 		);
 		
 		if (result) {
@@ -1744,7 +1744,7 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 		
 	} else if (acReadBuffer[0] != '/') {
 
-		// チャット送信
+		// Submit chat
 
 		if (clientStatus > 1) {
 			char sendData[kBufferSize];
@@ -1755,29 +1755,29 @@ COMMAND_RESULT * _stdcall TextCommand(const char * acReadBuffer)
 	
 			SendCommand(sdex, &dh, sendData);
 		} else {
-			snprintf(pb, sizeof(pb), "アリーナに接続していません");
+			snprintf(pb, sizeof(pb), "I'm not connected to the arena");
 			callUI(TUNNEL_EVENT_ERROR, 0, pb);
 		}
 
 	} else {
-		snprintf(pb, sizeof(pb), "サポート外のコマンド : %s", acReadBuffer);
+		snprintf(pb, sizeof(pb), "Command not supported : %s", acReadBuffer);
 		callUI(TUNNEL_EVENT_ERROR, 0, pb);
 	}
 	return result;
 }
 
 /** 
- * WinPcapでキャプチャーしたパケットを処理するコールバック関数
+ * Callback function to handle the packets captured in the WinPcap
  */
 void packet_handler(u_char *, const struct pcap_pkthdr *header, const u_char *pkt_data)
 {
-	// 接続してないなら何もしない
+	// I do not do anything not connected
 	if (clientStatus < 2) {
 		return;
 	}
 	char dummyPacket[16];
 	ZeroMemory(dummyPacket, 16); 
-	// ダミーパケットなら何もしない
+	// I do not do anything if the dummy packet
 	if (memcmp(dummyPacket, pkt_data, 12) == 0) {
 		lastDummyPacket = clock();
 		return;
@@ -1822,7 +1822,7 @@ void packet_handler(u_char *, const struct pcap_pkthdr *header, const u_char *pk
 
 		bool ignore = false;
 
-		// Type が 88 C8 なら、自動で4台まで認識する
+		// If Type is 88 C8, automatically recognize up to 4
 		for (int i = 0; i < maxiMacAddr; i++) {
 //			if (ignoreMac[i].last_clock + 1000 > clock()) {
 			if (ignoreMac[i].active) {
@@ -1852,7 +1852,7 @@ void packet_handler(u_char *, const struct pcap_pkthdr *header, const u_char *pk
 	}
 
 	if (doSend > -1) {
-		// 送信元がリダイレクト対象でも、送信先までリダイレクト対象ならば、送る必要は無い
+		// The source also subject to redirect, if there is no need to be redirected to the destination, and sends
 		for (int i = 0; i < maxMacAddr; i++) {
 			if (mac[i].last_clock > 0) {
 				if (memcmp((char *)&mac[i], &pkt_data[0], 6) == 0) {
@@ -1941,7 +1941,7 @@ bool FindDevice(WIRELESS_LAN_DEVICE * dev)
 	}
 	if(pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
-		callUI(TUNNEL_EVENT_ERROR, 0, "ネットワークデバイスの一覧の取得に失敗しました");
+		callUI(TUNNEL_EVENT_ERROR, 0, "I failed to get the list of network devices");
 		return false;
 	}
 	d=alldevs;
@@ -2037,11 +2037,11 @@ int __stdcall GetClientStatus()
 BOOL WINAPI DllEntryPoint(HINSTANCE, DWORD fdwReason, LPVOID*)
 {
 	switch (fdwReason){
-		case DLL_PROCESS_ATTACH: //ロードされるときの処理
+		case DLL_PROCESS_ATTACH: //Processing when loaded
 //			LogOut("dll", "DLL_PROCESS_ATTACH");
 			InitClient();
 			return TRUE;
-		case DLL_PROCESS_DETACH: //アンロードされるときの処理
+		case DLL_PROCESS_DETACH: //Processing when it is unloaded
 			CloseDevice();
 			CloseConnect();
 			if (pinfo.hProcess != NULL) {

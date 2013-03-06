@@ -2,12 +2,12 @@
  * $Id: tunnel-server.h,v 1.8 2008/06/06 10:38:13 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルサーバーソフト
+ * Tunnel server software for MHP
  */
 #ifndef TUNNELSERVER_H_
 #define TUNNELSERVER_H_
 
-// DLLAPI宣言がなければ、これを定義 (お約束のようです)
+// If there is no declaration DLLAPI, definition (like a promise) to this
 #ifndef DLLAPI
 #define DLLAPI extern "C" __declspec(dllimport)
 #pragma comment (lib, "tunnelsvr.lib")
@@ -33,7 +33,7 @@ struct ARENA
 	char adminId[32];
 };
 
-// コールバック関数
+// The callback function
 typedef void (*server_log_handler)(const char * logText);
 
 DLLAPI void _stdcall SetServerLogHandler(server_log_handler handler);

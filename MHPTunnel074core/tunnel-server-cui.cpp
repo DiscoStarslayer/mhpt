@@ -2,7 +2,7 @@
  * $Id: tunnel-server-cui.cpp,v 1.4 2008/06/06 11:38:37 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルクライアント
+ * Tunnel client for MHP
  */
 #include <iostream>
 
@@ -22,7 +22,7 @@ void ConsoleServerLogHandler(const char * log)
 	printf("%04d/%02d/%02d %02d:%02d:%02d %s\n", syst.wYear, syst.wMonth, syst.wDay, syst.wHour, syst.wMinute, syst.wSecond, log);
 }
 
-// CUIで作る場合の処理ルーチン
+// Processing routine when made ??with CUI
 int main(int argc, char *argv[])
 {
 	SetServerLogHandler(ConsoleServerLogHandler);
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 		}
     }
 
-    printf("MHP Tunnel Server Ver%d.%d by Pensil\n\n", arena.majorVersion, arena.minorVersion);
+    printf("MHP Tunnel Server Ver%d.%d by Pensil. Edit by Darren\n\n", arena.majorVersion, arena.minorVersion);
 
 //	GetSetting(_T("Server"), _T(""), szServer , 256);
 

@@ -2,7 +2,7 @@
  * $Id: tunnel-server.cpp,v 1.24 2008/06/06 11:38:37 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルサーバーソフト
+ * Tunnel server software for MHP
  */
 #define DLLAPI extern "C" __declspec(dllexport)
 
@@ -60,7 +60,7 @@ void PrintMac(MAC_ADDRESS* mac)
 }
 
 /**
- * 空きセッションを取得する
+ * To get the free session
  */
 int GetIdolSession(void) {
 	for (int i = 0; i < maxOfSessions; i++) {
@@ -72,7 +72,7 @@ int GetIdolSession(void) {
 }
 
 /**
- * 受信コマンドに対する処理
+ * Processing for the incoming command
  */
 void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _data)
 {
@@ -87,26 +87,26 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 
 	//printf("%d から '%c'コマンド (%d バイト) 受信。\n", sdex->number, dh->dtype, (int)dh->dsize);
     if (dh->dtype == 'C') {
-		// コマンド C:チャット T:トンネルパケット
-		// 受信パケットをそのままリダイレクトする
+// Command C: chat T: tunnel packet
+// Redirect to accept the received packet
 		dh->doption = (char)sdex->number;
 		dh->dtype = 'c';
     
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 
-			// ここの送信ロジックはスレッド化するべきだと思うが・・・
-			// してみた
+// I think the logic here should send to thread ...
+// I tried to
 			if (sessions[i].state == STATE_CONNECTED) {
 
-				// コマンド送信
+				// Command transmission
                 //if (SendCommandByThread(sessions[i].sd, &dh, acReadBuffer)) {
 	            //int nTemp = SendCommand(sessions[i].sd, &dh, data);
 	            if (SendCommand(&sessions[i], dh, data)) {
 					//printf("%d → %d に転送 (%dバイト)\n", sdex->number, i, (int)dh->dsize);
 					//sessions[i].sendSize += nReadBytes;
                 } else {
-					snprintf(sb, sizeof(sb), "%d → %d に転送失敗。切断されたかも。 (%dバイト)", sdex->number, i, (int)dh->dsize);
+					snprintf(sb, sizeof(sb), "%d → %d Failure to transfer. Be disconnected. (%d bytes)", sdex->number, i, (int)dh->dsize);
 					slog(sb);
 					//sessions[i].type = 0;
                     //return false;
@@ -119,8 +119,8 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 		slog(sb);
 
     } else if (dh->dtype == 'D') {
-		// コマンド D:tell に相当するコマンド
-		// 指定した相手にのみ通知する
+// Command D: command that is equivalent to tell
+// Tell the other party only for the specified
 		
 		char commandType[30];
 		char tellTo[30];
@@ -132,11 +132,11 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 		dh->doption = (char)sdex->number;
 		dh->dtype = 'c';
     
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 
-			// ここの送信ロジックはスレッド化するべきだと思うが・・・
-			// してみた
+// I think the logic here should send to thread ...
+// I tried to
 			if (sessions[i].state == STATE_CONNECTED) {
 
 				if (strcmp(sessions[i].info.szNickName, tellTo) == 0) {
@@ -155,8 +155,8 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
         }
 
     } else if (dh->dtype == 'Y') {
-		// コマンド Y:party に相当するコマンド
-		// 指定した相手にのみ通知する
+// Command Y: command that is equivalent to the party
+// Tell the other party only for the specified
 		
 		char commandType[30];
 		//char tellTo[30];
@@ -167,11 +167,11 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 		dh->doption = (char)sdex->number;
 		dh->dtype = 'c';
     
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 
-			// ここの送信ロジックはスレッド化するべきだと思うが・・・
-			// してみた
+// I think the logic here should send to thread ...
+// I tried to
 			if (sessions[i].state == STATE_CONNECTED) {
 
 				if (strcmp(sessions[i].info.szSSID, sdex->info.szSSID) == 0) {
@@ -187,12 +187,12 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
         }
 
     } else if (dh->dtype == 'T') {
-		// コマンド T:トンネルパケット
-		// 受信パケットをそのままリダイレクトする
+// Command T: tunnel packet
+// Redirect to accept the received packet
 		dh->doption = (char)sdex->number;
 		dh->dtype = 't';
     
-		// 送信元のMACアドレスをリストに追加する
+		// Added to the list of source MAC address
 		findMac = -1;
 		for (int i = 0; i < maxMacAddr; i++) {
 			if (sdex->mac[i].active) {
@@ -208,30 +208,30 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 					memcpy((char *)&sdex->mac[i], &data[6], 6);
 					sdex->mac[i].active = true;
 					PrintMac(&sdex->mac[i]);
-					snprintf(sb, sizeof(sb), "PSP認識(%d %d): MACアドレス = %s", sdex->number, i, macchar);
+					snprintf(sb, sizeof(sb), "Recognition PSP (%d %d): MAC address = %s", sdex->number, i, macchar);
 					slog(sb);
 					break;
 				}
 			}
 		}
 
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 
-			// ここの送信ロジックはスレッド化するべきだと思うが・・・
-			// してみた
+			// I think the logic here should send to thread ...
+			// I tried to
 			if (sessions[i].state == STATE_CONNECTED && sessions[i].number != sdex->number) {
 
 				bool yesSend = false;
 
-				// SSIDが等しい同士にパケットをトンネルする
+				// SSID to tunnel packets are equal to each other
 				if (!useSSID || strcmp(sdex->info.szSSID, sessions[i].info.szSSID) == 0) {
-					// まず、ブロードキャスト送信をリダイレクトする
+					// First, to redirect the broadcast transmission
 					if (memcmp(&bc, data, 6) == 0) {
 						yesSend = true;
 					} else {
 						
-						// 送信先のMACアドレスをリストに存在するか確認する
+						// Check list exists in the MAC address of the destination
 						for (int m = 0; m < maxMacAddr; m++) {
 							if (sessions[i].mac[m].active) {
 								if (memcmp((char *)&sessions[i].mac[m], data, 6) == 0) {
@@ -243,7 +243,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 					}
 				}
 				
-				// コマンド送信
+				// Command transmission
                 //if (SendCommandByThread(sessions[i].sd, &dh, acReadBuffer)) {
 	            //int nTemp = SendCommand(sessions[i].sd, &dh, data);
 	            if (yesSend) {
@@ -251,7 +251,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 //						printf("%d → %d に転送 (%dバイト)\n", sdex->number, i, (int)dh->dsize);
 						//sessions[i].sendSize += nReadBytes;
 	                } else {
-						snprintf(sb, sizeof(sb), "%d → %d に転送失敗。切断されたかも。 (%dバイト)", sdex->number, i, (int)dh->dsize);
+						snprintf(sb, sizeof(sb), "%d → %d Failure to transfer. Be disconnected. (%d bytes)", sdex->number, i, (int)dh->dsize);
 						slog(sb);
 						//sessions[i].type = 0;
 	                    //return false;
@@ -262,10 +262,10 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 
     } else if (dh->dtype == 'A') {
 
-		// コマンド A:新ユーザー一覧確認コマンド
+		// Command to verify the new user list command: A
 		dh->dtype = 'a';		
 		int count = 0;    
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 			if (sessions[i].state == STATE_CONNECTED) {
 				count++;
@@ -276,7 +276,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
         USER_INFO * ui;
         ui = (USER_INFO *)malloc(sizeof(USER_INFO)*count);    
     	count = 0;
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 			if (sessions[i].state == STATE_CONNECTED) {				
 				memcpy(&ui[count], &sessions[i].info, sizeof(USER_INFO));
@@ -288,16 +288,16 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
  
     } else if (dh->dtype == 'U') {
 
-		// コマンド U:ユーザー一覧確認コマンド
-		// 受信パケットをそのままリダイレクトする
+// Command U: command to verify the user list
+// Redirect to accept the received packet
 		dh->doption = (char)sdex->number;
 		dh->dtype = 'u';
     
-    	// 有効なセッション全部を対象にする
+    	// A valid session to target all
     	for (int i = 0; i < maxOfSessions; i++) {
 
-			// ここの送信ロジックはスレッド化するべきだと思うが・・・
-			// してみた
+// I think the logic here should send to thread ...
+// I tried to
 			if (sessions[i].state == STATE_CONNECTED) {
 
 	            SendCommand(&sessions[i], dh, data);
@@ -319,8 +319,8 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 		}
 
 		if (dh->dtype == 'I') {	
-			// コマンド U:ユーザー一覧確認コマンド
-			// 受信パケットをそのままリダイレクトする
+// Command U: command to verify the user list
+// Redirect to accept the received packet
 			int i = (int)dh->doption;
 			dh->dtype = 'i';
 			dh->doption = (char)sdex->number;
@@ -329,14 +329,14 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 				SendCommand(&sessions[i], dh, data);
 	        }
 		} else {
-	    	// 有効なセッション全部を対象にする
+	    	// Targeted to all valid session
 //			snprintf(sb, sizeof(sb), "%d: %s SSID ->%s USERID ->%s", sdex->number, sdex->info.szNickName, sdex->info.szSSID, sdex->info.szUID);
 //			slog(sb);
 
-			// コマンド A:新ユーザー一覧確認コマンド
+			// Command to verify the new user list command: A
 			dh->dtype = 'a';		
 			int count = 0;    
-	    	// 有効なセッション全部を対象にする
+	    	// Targeted to all valid session
 	    	for (int i = 0; i < maxOfSessions; i++) {
 				if (sessions[i].state == STATE_CONNECTED) {
 					count++;
@@ -347,7 +347,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 	        dh->doption = (char)count;
 	        dh->dsize = sizeof(USER_INFO) * count;
 	    	count = 0;
-	    	// 有効なセッション全部を対象にする
+	    	// Targeted to all valid session
 	    	for (int i = 0; i < maxOfSessions; i++) {
 				if (sessions[i].state == STATE_CONNECTED) {				
 					memcpy(&ui[count], &sessions[i].info, sizeof(USER_INFO));
@@ -355,7 +355,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 		        }
 	        }
 
-	    	// 有効なセッション全部を対象にする
+	    	// Targeted to all valid session
 	    	for (int i = 0; i < maxOfSessions; i++) {
 	
 				if (sessions[i].state == STATE_CONNECTED) {
@@ -383,10 +383,10 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 //		slog(sb);
 //		}
 
-		// コマンド A:新ユーザー一覧確認コマンド
+		//Command to verify the new user list command: A
 		dh->dtype = 'a';		
 		int count = 0;    
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 			if (sessions[i].state == STATE_CONNECTED) {
 				count++;
@@ -397,7 +397,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
         USER_INFO * ui;
         ui = (USER_INFO *)malloc(sizeof(USER_INFO)*count);    
     	count = 0;
-    	// 有効なセッション全部を対象にする
+    	// Targeted to all valid session
     	for (int i = 0; i < maxOfSessions; i++) {
 			if (sessions[i].state == STATE_CONNECTED) {				
 				memcpy(&ui[count], &sessions[i].info, sizeof(USER_INFO));
@@ -409,7 +409,7 @@ void doServerCommand(SOCKET_EX * sdex, const DATA_HEADER * _dh, const char * _da
 
 //		printf("%d : ping(S%d->R%d S%d->R%d)\n", sdex->number , sdex->sendCount, dh->recvCount, dh->sendCount ,sdex->recvCount);
     } else {
-		snprintf(sb, sizeof(sb), " → サポート外のコマンド [%c]", dh->dtype);
+		snprintf(sb, sizeof(sb), " → Command not supported [%c]", dh->dtype);
 		slog(sb);
         //return false;
     }
@@ -424,11 +424,11 @@ void doServerClose(SOCKET_EX * sdex)
 	DATA_HEADER dh;
 	char data[256];
 	
-	snprintf(data, sizeof(data), "%d が切断しました", sdex->number);
+	snprintf(data, sizeof(data), "%d I cut the", sdex->number);
 	dh.dtype = 'z';
 	dh.dsize = (short)strlen(data);
 
-	// 有効なセッション全部を対象にする
+	// Targeted to all valid session
 	for (int i = 0; i < maxOfSessions; i++) {
 
 		if (sessions[i].state == STATE_CONNECTED) {
@@ -450,15 +450,15 @@ DWORD WINAPI DoListening(void * _Socket)
 
 	// ひたすら接続待ち
     while (1) {
-	    slog("接続を待っています...");
+	    slog("I'm waiting for a connection ...");
 		int i = GetIdolSession();
 		while(i == -1) {
-			// アイドルセッションがないので 5秒待ってみる
+			// I'll wait for 5 seconds because there is no session idle
 			Sleep(5000);
 			i = GetIdolSession();
 		};
 		if (AcceptConnection(&sessions[i], ListeningSocket)) {
-			snprintf(sb, sizeof(sb), "接続セッション番号 : %d", i);
+			snprintf(sb, sizeof(sb), "Connection session number : %d", i);
 			slog(sb);
 //            cout << "クライアント " <<
 //                    inet_ntoa(sessions[i].sinRemote.sin_addr) << ":" <<
@@ -489,7 +489,7 @@ DLLAPI bool _stdcall OpenServer(struct ARENA * arena)
 	int port = htons(nPort);
 //	slog("471:OpenServer");
 
-    // セッションリストの初期化
+    // Session initialization list
 	for (int i = 0; i < maxOfSessions; i++) {
 		sessions[i].sd = INVALID_SOCKET;
 		sessions[i].state = STATE_IDOL;
@@ -499,27 +499,27 @@ DLLAPI bool _stdcall OpenServer(struct ARENA * arena)
 		sessions[i].doConnect = doServerConnect;
 	}
 
-	// 自分のホスト名を得る
+	// Get the name of your host
 //	slog("484:OpenServer");
 	char ac[80];
     if (gethostname(ac, sizeof(ac)) == SOCKET_ERROR) {
 
-    	// 自分のホスト名が取得できませんでした
-    	snprintf(sb, sizeof(sb), "ローカルホスト名は %s です。", ac);
+    	// Its own host name could not be retrieved
+    	snprintf(sb, sizeof(sb), "The local host name is %s.", ac);
     	slog(sb);
         return 1;
     }
 
-    // 自分のホスト名から、自分のIPアドレスを得る
+    // From its own host name, get the IP address of their own
 //	slog("495:OpenServer");
     struct hostent *phe = gethostbyname(ac);
     if (phe == 0) {
 
-    	// 自分のIPアドレスが取得できませんでした
+    	// Your IP address could not be obtained
         return 2;
     }
 
-    // 全てのIPアドレスで待ち受ける
+    // Listens on all IP addresses
 //	slog("504:OpenServer");
     numOfThread = 0;
     for (int i = 0; phe->h_addr_list[i] != 0; ++i) {
@@ -531,7 +531,7 @@ DLLAPI bool _stdcall OpenServer(struct ARENA * arena)
 		    memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
 	    	memcpy(&sinInterface.sin_addr.s_addr, phe->h_addr_list[i], sizeof(struct in_addr));
             sinInterface.sin_port = port;
-	    	snprintf(sb, sizeof(sb), "アドレスは %s:%d です。", inet_ntoa(addr), nPort);
+	    	snprintf(sb, sizeof(sb), "Address %s: is d%.", inet_ntoa(addr), nPort);
 	    	slog(sb);
             if (bind(listenSocket[numOfThread], (sockaddr*)&sinInterface, 
                     sizeof(sockaddr_in)) != SOCKET_ERROR) {
@@ -539,7 +539,7 @@ DLLAPI bool _stdcall OpenServer(struct ARENA * arena)
                 hThreads[numOfThread] = CreateThread(0, 0, DoListening, (void*)&listenSocket[numOfThread], 0, NULL);
                 numOfThread++;
             } else {
-            	// bind失敗
+            	// bind failure
             }
         }
         Sleep(100);
@@ -591,7 +591,7 @@ DLLAPI void _stdcall GetServerSetting(struct ARENA * arena)
 	char szPort[10];
 	GetSetting("Port" , "443", szPort , 10);
 
-	// ポート番号
+	// Port number
     arena->port = atoi(szPort);
     arena->majorVersion = MAJOR_VERSION;
     arena->minorVersion = MINOR_VERSION;

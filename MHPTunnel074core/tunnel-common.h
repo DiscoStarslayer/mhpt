@@ -2,8 +2,8 @@
  * $Id: tunnel-common.h,v 1.19 2008/05/30 09:14:27 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * 共通プログラムヘッダ
- * いろいろ詰め込みすぎて大きくなりすぎて失敗した例
+* Common header program
+? * The example I failed too many big stuff too
  */
 
 #if !defined(TUNNEL_COMMON_H)
@@ -49,7 +49,7 @@ struct DATA_HEADER {
 
 struct SOCKET_EX;
 
-// ユーザー名を取得するコールバック関数
+// Callback function to retrieve the user name
 typedef void (*DoConnect)(SOCKET_EX * sdex);
 typedef void (*DoCommand)(SOCKET_EX * sdex, const DATA_HEADER * dh, const char * data);
 typedef void (*DoClose)(SOCKET_EX * sdex);

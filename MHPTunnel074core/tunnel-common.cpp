@@ -2,7 +2,7 @@
  * $Id: tunnel-common.cpp,v 1.29 2008/06/08 09:53:17 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * WinSockによる、サーバー/クライアント間通信をサポートする
+ * According to the WinSock, to support communication between the server / client
  */
 
 #include "tunnel-common.h"
@@ -163,7 +163,7 @@ u_long LookupAddress(const char* pcHost)
     return nRemoteAddr;
 }
 
-// 残り受信パケットサイズ
+// Receive Packet Size rest
 int RecvPacketSize(SOCKET_EX *sdex)
 {
 	//sdex->recvWritePoint : 受信アドレス
@@ -171,13 +171,13 @@ int RecvPacketSize(SOCKET_EX *sdex)
 	// 残りサイズ = sdex->recvWritePoint - sdex->recvReadPoint
 	int size = sdex->recvWritePoint - sdex->recvReadPoint;
 	if (size < 0) {
-		// 0以下ということは、バッファ終端を越えているということ
+		// That is less than or equal to zero, that is beyond the end buffer
 		size += sdex->recvBufferSize;
 	}
     return size;
 }
 
-// 残り送信パケットサイズ
+// Remaining transmission packet size
 int SendPacketSize(SOCKET_EX *sdex)
 {
 	//sdex->recvWritePoint : 受信アドレス
@@ -185,16 +185,16 @@ int SendPacketSize(SOCKET_EX *sdex)
 	// 残りサイズ = sdex->recvWritePoint - sdex->recvReadPoint
 	int size = sdex->sendWritePoint - sdex->sendReadPoint;
 	if (size < 0) {
-		// 0以下ということは、バッファ終端を越えているということ
+		// That is less than or equal to zero, that is beyond the end buffer
 		size += sdex->sendBufferSize;
 	}
     return size;
 }
 
-// 残り受信コマンドサイズ
+// Remaining size of the receive command
 void SendBufferCopy(SOCKET_EX *sdex, const char *data, int start_, int size)
 {
-//	printf("SendBufferCopy きました from %d  size %d\n", start_, size);
+//	printf("SendBufferCopy Came from %d  size %d\n", start_, size);
 	if (size < 1) {
 		return;
 	}
@@ -202,7 +202,7 @@ void SendBufferCopy(SOCKET_EX *sdex, const char *data, int start_, int size)
 	while (start > sdex->sendBufferSize) {
 		start = start - sdex->sendBufferSize;
 	}
-	// バッファの終端の切れ目にさしかかるかどうか
+	// Whether approaching the break at the end of the buffer
 	if ( start + size < sdex->sendBufferSize ) {
 		//printf("230:memcopy\n");
 		memcpy(&sdex->sendBuffer[start], data, size);
@@ -214,14 +214,14 @@ void SendBufferCopy(SOCKET_EX *sdex, const char *data, int start_, int size)
 	}
 }
 
-// 残り受信コマンドサイズ
+// Remaining size of the receive command
 void RecvBufferCopy(SOCKET_EX *sdex, char *data, int start_, int size)
 {
 	int start = start_;
 	while (start > sdex->recvBufferSize) {
 		start = start - sdex->recvBufferSize;
 	}
-	// バッファの終端の切れ目にさしかかるかどうか
+	// Whether approaching the break at the end of the buffer
 	if ( start + size < sdex->recvBufferSize ) {
 		//printf("230:memcopy\n");
 		memcpy(data, &sdex->recvBuffer[start], size);
@@ -233,7 +233,7 @@ void RecvBufferCopy(SOCKET_EX *sdex, char *data, int start_, int size)
 	}
 }
 
-// 残り送信バッファの移動
+// Move the rest of the send buffer
 void SendBufferMove(SOCKET_EX *sdex, int size)
 {
 	int newPoint = sdex->sendWritePoint + size;
@@ -244,7 +244,7 @@ void SendBufferMove(SOCKET_EX *sdex, int size)
 	sdex->sendWritePoint = newPoint;
 }
 
-// 残り受信バッファの移動
+// Move the rest of the receive buffer
 void RecvBufferMove(SOCKET_EX *sdex, int size)
 {
 	int newPoint = sdex->recvReadPoint + size;
@@ -255,7 +255,7 @@ void RecvBufferMove(SOCKET_EX *sdex, int size)
 	sdex->recvReadPoint = newPoint;
 }
 
-// 残り送信コマンドサイズ
+// Remaining size of the send command
 int SendCommandSize(SOCKET_EX *sdex)
 {
 	//sdex->sendWritePoint : 送信バッファアドレス
@@ -268,7 +268,7 @@ int SendCommandSize(SOCKET_EX *sdex)
     return size;
 }
 
-// 残り受信コマンドサイズ
+// Remaining size of the receive command
 int RecvCommandSize(SOCKET_EX *sdex)
 {
 	//sdex->recvWritePoint : 受信アドレス
@@ -283,7 +283,7 @@ int RecvCommandSize(SOCKET_EX *sdex)
 	do {
 		int size = sdex->recvWritePoint - checkPoint;
 		if (size < 0) {
-			// 0以下ということは、バッファ終端を越えているということ
+			// That is less than or equal to zero, that is beyond the end buffer
 			int last = sdex->recvBufferSize - checkPoint;
 			addr = (char*)memchr( &sdex->recvBuffer[checkPoint], eof[0], last );
 			if (addr == NULL) {
@@ -304,7 +304,7 @@ int RecvCommandSize(SOCKET_EX *sdex)
 		checkPoint = (int)(addr - sdex->recvBuffer);
 //		printf("282: < は、%d にありました!\n", checkPoint);
 		
-		// チェックポイントがバッファの終端にさしかかっているかどうか
+		// Whether or not the check point at the end of the buffer Sashikaka~tsu
 		bool checkOk = false;
 		if (checkPoint + (int)sizeof(eof) < sdex->recvBufferSize) {
 //			printf("295: バッファの終端以内\n");
@@ -351,9 +351,9 @@ bool RecvCommand(SOCKET_EX *sdex, DATA_HEADER *hd, char *data, int maxSize)
 	}
 //	printf("recv %d から %d バイト受信\n", sdex->recvReadPoint, size);
 	
-	// バッファサイズを超えるコマンド
+	// Command exceeds the buffer size
 	if (size > maxSize) {
-		printf("致命的エラー:サイズ上限を超えたコマンドを受信しました。(%d > %d)このコマンドをスルーします。\n", size, maxSize);
+		printf("I received a command exceeds the maximum size: Fatal Error.(%d > %d)I will through this command.\n", size, maxSize);
 		// 読み込みポインタを移動
 //		RecvBufferMove(sdex, size + sizeof(eof));
 		RecvBufferMove(sdex, size);
@@ -361,32 +361,32 @@ bool RecvCommand(SOCKET_EX *sdex, DATA_HEADER *hd, char *data, int maxSize)
 		return false;
 	}
 	
-	// データ形式を確認して、"GET"もしくは"POST"もしくは"HEAD"の場合は、HTTPとして処理する
+	// If the "HEAD" or "POST" or, "GET" and then check the data format, it is treated as a HTTP
 //	RecvBufferCopy(sdex, (char *)hd, sdex->recvReadPoint, sizeof(DATA_HEADER));
 
-	// ヘッダーを取得
+	// Gets the header
 	RecvBufferCopy(sdex, (char *)hd, sdex->recvReadPoint, sizeof(DATA_HEADER));
 
 	if (size > sizeof(DATA_HEADER)) {
-		// データを取得
+		// Get data
 		RecvBufferCopy(sdex, data, sdex->recvReadPoint + sizeof(DATA_HEADER), size - sizeof(DATA_HEADER) - sizeof(eof));
 		hd->dsize = (short)(size - sizeof(DATA_HEADER) - sizeof(eof));
 	}
 
-	// 読み込みポインタを移動
+	// Move the read pointer
 //	RecvBufferMove(sdex, size + sizeof(eof));
 	RecvBufferMove(sdex, size);
 	//printf("355:LeaveCriticalSection\n");
 
 	if (sdex->sendCountBefore + 1 != hd->sendCount && sdex->sendCountBefore != 0)
 	{
-		// データ取得失敗
+		// Data acquisition failure
 		char debugini[40];
 		GetSetting("debug", "false", debugini, sizeof(debugini));
 		if (strcmp(debugini, "true") == 0) {
 		
 		    BufferDump(sdex, hd, data);
-			printf("内部エラーのため一度再接続します。エラー内容をファイルに出力しました。\n");
+			printf("I reconnect once due to an internal error. I output to a file error.\n");
 		}
 		
 		//printf("LostSendCount! %d - %d = %d\n", hd->sendCount, sdex->sendCountBefore + 1, hd->sendCount - sdex->sendCountBefore - 1);
@@ -414,10 +414,10 @@ bool RecvCommand(SOCKET_EX *sdex, DATA_HEADER *hd, char *data, int maxSize)
 
 int SendFromBuffer(SOCKET_EX * sdex);
 
-// 指定したヘッダーつきのコマンドを送信する
-// return 0 : 送信失敗
-// return SOCKET_ERROR : ソケットエラー
-// return 0以上 : トータル送信パケット数
+// Send the command with the specified header
+// 0 return: transmission failure
+// Return SOCKET_ERROR: socket error
+// Greater than return 0: total number of packets sent
 bool SendCommand(SOCKET_EX *sdex, DATA_HEADER *hd, const char *data)
 {
 //	char pb[200];
@@ -469,7 +469,7 @@ bool RecvAndExecCommand(SOCKET_EX * sdex)
 	char data[4096];
 	while (RecvCommand(sdex, &dh, data, sizeof(data)))
 	{
-		// 受信バッファにコマンドがある限り繰り返す
+		// Repeated as long as there is a command in the receive buffer
 		sdex->doCommand(sdex, &dh, data);
 	}
 	return false;
@@ -480,16 +480,16 @@ int RecvToBuffer(SOCKET_EX * sdex)
 	int last = sdex->recvBufferSize - sdex->recvWritePoint;
 	int start = sdex->recvWritePoint;
 	if (last == 0) {
-		// 読み込みバッファが一巡したら、バッファの最初から読み込む
+		// Read buffer has run its course, read from the beginning of the buffer
 		start = 0;
 		last = sdex->recvBufferSize;
 	}
     //printf("受信バッファ残り : %d バイト\n", sdex->recvBufferSize - sdex->recvWritePoint);
 
-	// 受信クリティカルセクションも1つとする
-	// と、思ったら受信スレッドは1つしかないから競合するわけないじゃん
-	// クリティカルセクション使う意味無し。
-	// よってやめる
+// Critical section as well as one receiver
+// There 's no reason to compete, because there is only one receiver thread, and I thought
+// No sense to use a critical section.
+// So quit
 	EnterCriticalSection(&sdex->recvSection);
     //printf("RECV起動\n");
 	sdex->recvState = 1;
@@ -500,10 +500,10 @@ int RecvToBuffer(SOCKET_EX * sdex)
 		sdex->recvWritePoint = start + nTemp;
 		sdex->recvState = 0;
 		sdex->recvLast = clock();
-		// TODO: 書き込みポイントが読み込みポイントを超えた場合
-		// バッファオーバーフローエラーを出すべきだができてない
-		
-		// どうも受信して直後にパケットおくるのがまずいのかな?
+// TODO: If you write is beyond the point read point
+// But I have not been able to make a buffer overflow error
+
+// Send the packet immediately after receiving Maybe somehow wrong?
 		//printf("recv(): SUCCESS!\n");
 	} else if (nTemp == SOCKET_ERROR) {
 		if(WSAGetLastError() != WSAEWOULDBLOCK){
@@ -520,7 +520,7 @@ int RecvToBuffer(SOCKET_EX * sdex)
 		//sdex->state = STATE_ERROR;
 //		printf("%d:受信時エラー切断しました(送信バイト0)\n", sdex->number);
 		//CloseConnection(sdex);
-    	// タイムアウトした可能性有り。
+    	// There is a possibility that has timed out.
     	//Sleep(100);
 		sdex->recvState = -1;
 		sdex->recvLast = clock();
@@ -553,10 +553,10 @@ int SendFromBuffer(SOCKET_EX * sdex)
 		}
 	    //printf("受信バッファ残り : %d バイト\n", sdex->recvBufferSize - sdex->recvWritePoint);
 	
-		// 受信クリティカルセクションも1つとする
-		// と、思ったら受信スレッドは1つしかないから競合するわけないじゃん
-		// クリティカルセクション使う意味無し。
-		// よってやめる
+// Critical section as well as one receiver
+// There 's no reason to compete, because there is only one receiver thread, and I thought
+// No sense to use a critical section.
+// So quit
 		//EnterCriticalSection(&sdex->recvSection);
 	    //printf("RECV起動\n");
 		sdex->sendState = 1;
@@ -569,10 +569,10 @@ int SendFromBuffer(SOCKET_EX * sdex)
 			sdex->sendReadPoint = start + nTemp;
 			sdex->sendState = 0;
 			sdex->sendLast = clock();
-			// TODO: 書き込みポイントが読み込みポイントを超えた場合
-			// バッファオーバーフローエラーを出すべきだができてない
-			
-			// どうも受信して直後にパケットおくるのがまずいのかな
+// TODO: If you write is beyond the point read point
+// But I have not been able to make a buffer overflow error
+
+// Send the packet immediately after receiving Maybe somehow bad
 			//printf("recv(): SUCCESS!\n");
 			//RecvAndExecCommand(sdex);
 			sendSize += nTemp;
@@ -596,7 +596,7 @@ int SendFromBuffer(SOCKET_EX * sdex)
 			//sdex->state = STATE_ERROR;
 //			printf("%d:送信時エラー切断しました(送信バイト0)\n", sdex->number);
 			//CloseConnection(sdex);
-	    	// タイムアウトした可能性有り。
+	    	// There is a possibility that has timed out.
 	    	//Sleep(100);
 			sdex->sendState = -1;
 			sdex->sendLast = clock();
@@ -610,7 +610,7 @@ int SendFromBuffer(SOCKET_EX * sdex)
 }
 
 /**
- *  イベントを使用してパケットを送受信するスレッド
+ *  Thread to send and receive packets using the event
  */
 DWORD WINAPI SocketEventHandler(void * sdex_) 
 {
@@ -624,7 +624,7 @@ DWORD WINAPI SocketEventHandler(void * sdex_)
 
     while(sdex->state == STATE_CONNECTED)
     {
-        /*  イベント待ち                */
+        /*  Wait for Event               */
         nRet = WSAWaitForMultipleEvents(1,&hEvent,FALSE,WSA_INFINITE,FALSE);
 
         if(nRet == WSA_WAIT_FAILED)
@@ -632,10 +632,10 @@ DWORD WINAPI SocketEventHandler(void * sdex_)
             break;
         }
 
-        /*  イベントの調査              */
+        /*  Investigation of the event             */
         if(WSAEnumNetworkEvents(sdex->sd,hEvent,&events) == SOCKET_ERROR)
         {
-        	// なんかエラーでた
+        	// Something was in error
 			//printf("SOCKET_ERROR on RecvEvent\n");
             break;
         }
@@ -665,13 +665,13 @@ DWORD WINAPI SocketEventHandler(void * sdex_)
         }
     }
 
-    WSACloseEvent(hEvent);                  /*  イベントクローズ            */
+    WSACloseEvent(hEvent);                  /*  Events close            */
 
     CloseConnection(sdex);
     return 0;
 }
 
-// Ping送信スレッド
+// Submit Thread Ping
 DWORD WINAPI PingAction(void * sdex_) 
 {
 	DATA_HEADER dh;
@@ -792,13 +792,13 @@ bool StartConnection(SOCKET_EX *sdex)
 
 	if (sdex->localConnect == NULL) {
 		// SO_KEEPALIVE :
-		//    通信状態を切断せずに接続し続ける。Getして確認するだけ
+		//    Remain connected without disconnecting the communication state. We just make sure to Get
 		if (getsockopt(sdex->sd, SOL_SOCKET, SO_KEEPALIVE, (char*)&iOptVal, &iOptLen) != SOCKET_ERROR) {
 			//printf("SO_KEEPALIVE Value: %ld\n", iOptVal);
 	
 		}
 		// TCP_NODELAY :
-		//    パケットを蓄積せずに即送信するように設定する
+		//    Call now configured to send packets without storing
 	    if (setsockopt(sdex->sd, IPPROTO_TCP, TCP_NODELAY, (char*)&iOptVal, iOptLen) != 0) {
 	
 	    }
@@ -821,7 +821,7 @@ bool CloseConnection(SOCKET_EX *sdex)
 		return true;
 	}
 
-	// 切断処理コールバック関数を起動
+	// Disconnection process invokes the callback functions
 	memcpy((char*)&closedsdex, (char*)sdex, sizeof(SOCKET_EX));
 
 	if (sdex->state == STATE_CONNECTED || sdex->state == STATE_ERROR) {
@@ -838,7 +838,7 @@ bool CloseConnection(SOCKET_EX *sdex)
 	//DeleteCriticalSection(&sdex->sendSection);
 	//DeleteCriticalSection(&sdex->recvSection);
 	//free(sdex->sendBuffer);
-	//free(sdex->recvBuffer); // 受信バッファを消すと落ちるようだ
+	//free(sdex->recvBuffer); // And you seem to fall off the receive buffer
 	sdex->state = STATE_IDOL;
 
 	sdex->doClose(&closedsdex);
@@ -863,7 +863,7 @@ bool InitTunnel()
     WSAData wsaData;
 	int nCode;
     if ((nCode = WSAStartup(MAKEWORD(2, 0), &wsaData)) != 0) {
-		cerr << "WSAStartup()関数がエラーを返しました。エラーコードは " << nCode << " です。Windowsのバージョンが古い?" <<
+		cerr << "WSAStartup()Function returns an error. The error code is " << nCode << "Is. The old version of Windows?" <<
 				endl;
         return false;
     }
@@ -879,14 +879,14 @@ bool CloseTunnel()
 }
 
 /**
- * 設定ファイルを読み込む
+ * Reads the configuration file
  */ 
 void GetSetting(const char* key, const char* defValue, char* buffer, int size)
 {
 	char	cur[512];
 	TCHAR	* fileName = "ini";
 	if ( GetModuleFileName(NULL, cur, sizeof(cur)) == 0 ) {
-		// エラー
+		// Error
 	}
 	strcpy(&cur[strlen(cur) - 3], fileName);
 	
@@ -903,7 +903,7 @@ void SetSetting(const char* key, const char* value)
 	char	cur[512];
 	TCHAR	* fileName = "ini";
 	if ( GetModuleFileName(NULL, cur, sizeof(cur)) == 0 ) {
-		// エラー
+		// Error
 	}
 	strcpy(&cur[strlen(cur) - 3], fileName);
 	
@@ -933,20 +933,20 @@ void BufferDump(SOCKET_EX * sdex, DATA_HEADER * hd, char * data)
 	char szOutput[_MAX_PATH * 5 + 1024];//(^^;
 	DWORD dwRet;
 	
-	//初期化
+	//Initialization
 	memset(szPath, 0x00, sizeof(szPath));
 	memset(szDrive, 0x00, sizeof(szDrive));
 	memset(szDir, 0x00, sizeof(szDir));
 	memset(szExt, 0x00, sizeof(szExt));
 	memset(szOutput, 0x00, sizeof(szOutput));
 		
-	//実行中のプロセスのフルパス名を取得する
+	//Gets the full path name of a running process
 	dwRet = GetModuleFileName(NULL, szPath, sizeof(szPath));
 	if(dwRet == 0) {
 		
 	}
 		
-	//フルパス名を分割する
+	//Split the full path name
 	_splitpath(szPath, szDrive, szDir, szFileName, szExt); 
 	
 	//出力文字列を作成
@@ -1022,20 +1022,20 @@ void LogOut(const char * type, const char * text)
 	char szOutput[_MAX_PATH * 5 + 1024];
 	DWORD dwRet;
 	
-	//初期化
+	//Initialization
 	memset(szPath, 0x00, sizeof(szPath));
 	memset(szDrive, 0x00, sizeof(szDrive));
 	memset(szDir, 0x00, sizeof(szDir));
 	memset(szExt, 0x00, sizeof(szExt));
 	memset(szOutput, 0x00, sizeof(szOutput));
 		
-	//実行中のプロセスのフルパス名を取得する
+	//Gets the full path name of a running process
 	dwRet = GetModuleFileName(NULL, szPath, sizeof(szPath));
 	if(dwRet == 0) {
 		
 	}
 		
-	//フルパス名を分割する
+	//Split the full path name
 	_splitpath(szPath, szDrive, szDir, szFileName, szExt); 
 	
 	TCHAR	fileName[512];
@@ -1078,20 +1078,20 @@ void ServerLogOut(const char * text)
 	char szOutput[_MAX_PATH * 5 + 1024];
 	DWORD dwRet;
 	
-	//初期化
+	//Initialization
 	memset(szPath, 0x00, sizeof(szPath));
 	memset(szDrive, 0x00, sizeof(szDrive));
 	memset(szDir, 0x00, sizeof(szDir));
 	memset(szExt, 0x00, sizeof(szExt));
 	memset(szOutput, 0x00, sizeof(szOutput));
 		
-	//実行中のプロセスのフルパス名を取得する
+	//Gets the full path name of a running process
 	dwRet = GetModuleFileName(NULL, szPath, sizeof(szPath));
 	if(dwRet == 0) {
 		
 	}
 		
-	//フルパス名を分割する
+	//Split the full path name
 	_splitpath(szPath, szDrive, szDir, szFileName, szExt); 
 	
 	TCHAR	fileName[512];
