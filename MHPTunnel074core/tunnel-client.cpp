@@ -592,10 +592,10 @@ bool OpenConnect(const char * _server)
 //		    cout << inet_ntoa(Address) << ":" << port << endl;
 		    
 		    // Connect to the server
-		    callUI(TUNNEL_EVENT_NOTICE, 0, "サーバーに接続中です...");
+		    callUI(TUNNEL_EVENT_NOTICE, 0, "I am connecting to the server ...");
 //		    cout << "サーバーに接続中です..." << endl;
 		    if (!EstablishConnection(&gsd, nRemoteAddress, htons(port))) {
-			    callUI(TUNNEL_EVENT_NOTICE, 0, "サーバー接続に失敗しました。");
+			    callUI(TUNNEL_EVENT_NOTICE, 0, "I failed to connect to server.");
 //			    cerr << endl << WSAGetLastErrorMessage("接続に失敗しました。") << endl;
 		    } else {
 		    	connected = true;

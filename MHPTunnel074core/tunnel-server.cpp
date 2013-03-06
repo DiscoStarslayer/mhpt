@@ -531,7 +531,7 @@ DLLAPI bool _stdcall OpenServer(struct ARENA * arena)
 		    memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
 	    	memcpy(&sinInterface.sin_addr.s_addr, phe->h_addr_list[i], sizeof(struct in_addr));
             sinInterface.sin_port = port;
-	    	snprintf(sb, sizeof(sb), "Address %s: is d%.", inet_ntoa(addr), nPort);
+	    	snprintf(sb, sizeof(sb), "Address %s: is %d.", inet_ntoa(addr), nPort);
 	    	slog(sb);
             if (bind(listenSocket[numOfThread], (sockaddr*)&sinInterface, 
                     sizeof(sockaddr_in)) != SOCKET_ERROR) {
