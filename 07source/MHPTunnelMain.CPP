@@ -25,7 +25,7 @@
 #pragma resource "*.dfm"
 TMHPTunnelForm *MHPTunnelForm;
 //---------------------------------------------------------------------------
-// ログ監視スレッド
+// Thread log monitoring
 DWORD WINAPI MonitorLog(void * _obj)
 {
 	TMHPTunnelForm * obj = (TMHPTunnelForm *)_obj;
@@ -80,8 +80,8 @@ DWORD WINAPI MonitorLog(void * _obj)
 //								TFlashWInfo fi;
 //								fi.hwnd = obj->Handle;
 //								fi.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-//								fi.uCount = 10;    //点滅回数
-//								fi.dwTimeout = 500;   //点滅間隔
+//								fi.uCount = 10;    //Number of flashes
+//								fi.dwTimeout = 500;   //Interval of blinking
 //								FlashWindowEx(&fi);
 //	  							MessageBox(obj->Handle, log->text, "TFlashWInfo", MB_OK | MB_ICONEXCLAMATION);
 //							}
@@ -192,7 +192,7 @@ void TMHPTunnelForm::addLine(const char * color, const char * text)
 	}
 }
 //---------------------------------------------------------------------------
-// ログ監視スレッド
+//Thread log monitoring
 void ClientLogHandler(int eventType, int option, const char * _logText)
 {
 	char sender[64];
@@ -380,7 +380,7 @@ void __fastcall TMHPTunnelForm::ButtonSendClick(TObject *Sender)
 
 void __fastcall TMHPTunnelForm::MenuVersionClick(TObject *Sender)
 {
-	MessageBox(this->Handle, "MHPTunnel\nhttp://www.pensil.jp/MHPTunnel/", "バージョン情報", MB_OK);
+	MessageBox(this->Handle, "MHPTunnel\nhttp://www.pensil.jp/MHPTunnel/", "Version information", MB_OK);
 }
 //---------------------------------------------------------------------------
 
@@ -421,7 +421,7 @@ void __fastcall TMHPTunnelForm::MenuConnectArenaClick(TObject *Sender)
 	cTextCommand cmd;
 	const char * nickName = cmd.getSetting("NickName");
 	if (strlen(nickName) == 0) {
-		MessageBox(this->Handle, "ニックネームを設定してください", "MHP Tunnel", MB_OK);
+		MessageBox(this->Handle, "Please set your nickname", "MHP Tunnel", MB_OK);
 		ConfigForm->ShowModal();
 	} else {
 		ConnectForm->ShowModal();
@@ -515,7 +515,7 @@ void TMHPTunnelForm::SetBoolSetting(const char * key, bool value)
 
 void __fastcall TMHPTunnelForm::TrayIconClick(TObject *Sender)
 {
-	//	MessageBox(NULL, "ニックネームを設定してください", "MHP Tunnel", MB_OK);
+	//	MessageBox(NULL, "Please set your nickname", "MHP Tunnel", MB_OK);
 //	ShowWindow(Application->Handle, SW_SHOW);
 //	SetForegroundWindow(this->Handle);
 //	AnimateWindow(this->Handle, 200, AW_ACTIVATE);
@@ -528,10 +528,10 @@ void __fastcall TMHPTunnelForm::TrayIconClick(TObject *Sender)
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-// アプリケーションが非アクティブになった時のイベント
+// Events when the application becomes inactive
 void __fastcall TMHPTunnelForm::ApplicationDeactivate(TObject *Sender)
 {
-  //  アプリケーション最小化
+  //  Minimize application
   //Application->Minimize();
 }
 //---------------------------------------------------------------------------
@@ -915,7 +915,7 @@ void __fastcall TMHPTunnelForm::ApplicationEventsMessage(tagMSG &Msg,
 
 void __fastcall TMHPTunnelForm::MenuOnlineManualClick(TObject *Sender)
 {
-	// オンラインマニュアルへ
+	// To the online manual
 	ShellExecute(this->Handle,"open","http://www.pensil.jp/MHPTunnel/Readme.htm",0,0,1);
 }
 //---------------------------------------------------------------------------

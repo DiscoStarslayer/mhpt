@@ -2,7 +2,7 @@ object ConnectForm: TConnectForm
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = #12469#12540#12496#12540#12395#25509#32154
+  Caption = 'Connect to the server'
   ClientHeight = 281
   ClientWidth = 425
   Color = clBtnFace
@@ -21,28 +21,28 @@ object ConnectForm: TConnectForm
     Top = 54
     Width = 52
     Height = 13
-    Caption = #12469#12540#12496#12540#21517
+    Caption = 'Server name'
   end
   object Label2: TLabel
     Left = 67
     Top = 81
     Width = 52
     Height = 13
-    Caption = #12509#12540#12488#30058#21495
+    Caption = 'Port number'
   end
   object Label3: TLabel
     Left = 67
     Top = 188
     Width = 52
     Height = 13
-    Caption = #12509#12540#12488#30058#21495
+    Caption = 'Port number'
   end
   object RadioConnect: TRadioButton
     Left = 24
     Top = 23
     Width = 113
     Height = 17
-    Caption = #12469#12540#12496#12540#12395#25509#32154
+    Caption = 'Connect to the server'
     Checked = True
     TabOrder = 0
     TabStop = True
@@ -52,7 +52,7 @@ object ConnectForm: TConnectForm
     Top = 157
     Width = 129
     Height = 17
-    Caption = #12469#12540#12496#12540#12434#36215#21205#12377#12427
+    Caption = 'Start the server'
     TabOrder = 1
   end
   object EditServerName: TEdit
@@ -74,7 +74,7 @@ object ConnectForm: TConnectForm
     Top = 105
     Width = 164
     Height = 17
-    Caption = #36215#21205#26178#12395#33258#21205#12391#25509#32154#12377#12427
+    Caption = 'Connect automatically when you start'
     TabOrder = 4
   end
   object Button1: TButton
@@ -93,7 +93,7 @@ object ConnectForm: TConnectForm
     Width = 75
     Height = 25
     Cancel = True
-    Caption = #12461#12515#12531#12475#12523
+    Caption = 'Cancel'
     TabOrder = 6
     OnClick = Button2Click
   end

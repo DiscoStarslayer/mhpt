@@ -16,12 +16,12 @@
         <property category="build.config" name="excludedefaultforzero" value="0"/>
         <property category="build.config.0" name="builddir" value="Debug"/>
         <property category="build.config.0" name="key" value="Debug_Build"/>
-        <property category="build.config.0" name="name" value="デバッグビルド"/>
+        <property category="build.config.0" name="name" value="Debug build"/>
         <property category="build.config.0" name="settings.win32b" value="default"/>
         <property category="build.config.0" name="type" value="Toolset"/>
         <property category="build.config.0" name="win32.win32b.builddir" value="."/>
         <property category="build.config.1" name="key" value="Release_Build"/>
-        <property category="build.config.1" name="name" value="リリースビルド"/>
+        <property category="build.config.1" name="name" value="Release build"/>
         <property category="build.config.1" name="settings.win32b" value="default"/>
         <property category="build.config.1" name="type" value="Toolset"/>
         <property category="build.config.1" name="win32.win32b.builddir" value="."/>
@@ -72,7 +72,7 @@
         <property category="win32.Release_Build.win32b.tasm32" name="option.zi.enabled" value="0"/>
         <property category="win32.Release_Build.win32b.tasm32" name="option.zn.enabled" value="1"/>
         <optionset name="all_configurations">
-          <property category="node" name="displayname" value="すべてのビルド設定"/>
+          <property category="node" name="displayname" value="All the build settings"/>
           <property category="win32.*.win32b.bcc32" name="container.SelectedOptimizations.containerenabled" value="0"/>
           <property category="win32.*.win32b.bcc32" name="container.SelectedWarnings.containerenabled" value="1"/>
           <property category="win32.*.win32b.bcc32" name="option.4.enabled" value="0"/>

@@ -12,7 +12,7 @@
 //---------------------------------------------------------------------------
 class TConfigForm : public TForm
 {
-__published:	// IDE 管理のコンポーネント
+__published:	// Management components IDE
 	TButton *ButtonOK;
 	TButton *ButtonCancel;
 	TLabel *Label1;
@@ -39,10 +39,10 @@ __published:	// IDE 管理のコンポーネント
 	void __fastcall ComboBoxDeviceChange(TObject *Sender);
 	void __fastcall ButtonCancelClick(TObject *Sender);
 	void __fastcall Button2Click(TObject *Sender);
-private:	// ユーザー宣言
+private:	// User-declared
 	int deviceNum;
 	char* deviceName[20];
-public:		// ユーザー宣言
+public:		// User-declared
 	__fastcall TConfigForm(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

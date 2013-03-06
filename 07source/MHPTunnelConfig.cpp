@@ -81,7 +81,7 @@ void __fastcall TConfigForm::ButtonOKClick(TObject *Sender)
 {
 	cTextCommand cmd;
 	if (this->EditNickName->Text == "") {
-		MessageBox(this->Handle, "ニックネームを入力してください", "エラー", MB_OK);
+		MessageBox(this->Handle, "Please enter a nickname", "Error", MB_OK);
 	} else {
 		if (prev != select) {
 			cmd.execute("/closedevice");
@@ -162,11 +162,11 @@ void __fastcall TConfigForm::Button2Click(TObject *Sender)
 		Sleep(500);
 	}
 	if (GetAdapterStatus() == 0) {
-		MessageBox(this->Handle, "デバイスをオープンしてください", "テスト失敗", MB_OK);
+		MessageBox(this->Handle, "Please open the device", "Test failed", MB_OK);
 		return;
 	}
 	if (GetAdapterStatus() < 3) {
-		MessageBox(this->Handle, "PSPと接続できていません。\n集会所に入ってから再試行してください。", "テスト失敗", MB_OK);
+		MessageBox(this->Handle, "It is unable to connect to the PSP. \nPlease try again since the beginning of the meeting place.", "Test failed", MB_OK);
 		return;
 	}
 	cmd.execute("/test");
@@ -178,10 +178,10 @@ void __fastcall TConfigForm::Button2Click(TObject *Sender)
 	int count = 0;
 	sscanf(result, "%d", &count);
 	if (count == 0 || count > 2000) {
-		MessageBox(this->Handle, "パケットの送受信に失敗しました。\nこのデバイスではPSPと接続できない可能性があります。", "テスト失敗", MB_OK);
+		MessageBox(this->Handle, "I failed to transmit packets. \n Is this device may not be able to connect a PSP.", "Test failed", MB_OK);
 		return;
 	} else {
-		MessageBox(this->Handle, "パケットの送受信に成功しました。", "テスト成功", MB_OK);
+		MessageBox(this->Handle, "I was successful in sending and receiving packets.", "Successful Test", MB_OK);
 		return;
 	}
 }

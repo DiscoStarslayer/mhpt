@@ -1,5 +1,5 @@
-このファイルはプロジェクトマネージャが使いプロジェクトファイルのように扱います。
+This file is treated as a project file with project manager.
 
-このプロジェクトにファイルを追加するには[プロジェクト|プロジェクトに追加]を使います
+To add a file to this project use the [Project -> Add to Project]
 
 main

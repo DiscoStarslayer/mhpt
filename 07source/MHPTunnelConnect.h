@@ -10,7 +10,7 @@
 //---------------------------------------------------------------------------
 class TConnectForm : public TForm
 {
-__published:	// IDE 管理のコンポーネント
+__published:	// Management components IDE
 	TRadioButton *RadioConnect;
 	TRadioButton *RadioAccept;
 	TEdit *EditServerName;
@@ -25,8 +25,8 @@ __published:	// IDE 管理のコンポーネント
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall Button2Click(TObject *Sender);
 	void __fastcall Button1Click(TObject *Sender);
-private:	// ユーザー宣言
-public:		// ユーザー宣言
+private:	// User-declared
+public:		// User-declared
 	__fastcall TConnectForm(TComponent* Owner);
 };
 //---------------------------------------------------------------------------

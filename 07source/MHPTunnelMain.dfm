@@ -1663,15 +1663,15 @@ object MHPTunnelForm: TMHPTunnelForm
     AutoHint = True
     Panels = <
       item
-        Text = '???????'
+        Text = 'Server not connected'
         Width = 150
       end
       item
-        Text = '???????'
+        Text = 'Device not connected'
         Width = 150
       end
       item
-        Text = 'PSP???'
+        Text = 'Unconnected PSP'
         Width = 50
       end>
     SimplePanel = True
@@ -1695,7 +1695,7 @@ object MHPTunnelForm: TMHPTunnelForm
       Width = 65
       Height = 24
       Align = alRight
-      Caption = '??'
+      Caption = 'Transmission'
       Default = True
       TabOrder = 0
       OnClick = ButtonSendClick
@@ -1717,6 +1717,7 @@ object MHPTunnelForm: TMHPTunnelForm
       OnKeyDown = CommandBoxKeyDown
       OnKeyPress = CommandBoxKeyPress
       OnKeyUp = CommandBoxKeyUp
+      ExplicitHeight = 21
     end
   end
   object InfoPanel: TPanel
@@ -1747,7 +1748,7 @@ object MHPTunnelForm: TMHPTunnelForm
       Align = alTop
       Columns = <
         item
-          Caption = '??????'
+          Caption = 'Nickname'
           Width = 100
         end
         item
@@ -1779,7 +1780,7 @@ object MHPTunnelForm: TMHPTunnelForm
           Width = 100
         end
         item
-          Caption = '???'
+          Caption = 'Area'
           Width = 70
         end>
       Font.Charset = SHIFTJIS_CHARSET
@@ -1841,48 +1842,48 @@ object MHPTunnelForm: TMHPTunnelForm
     Left = 8
     Top = 152
     object MenuConnect: TMenuItem
-      Caption = '??(&C)'
+      Caption = 'Connection (&C)'
       object MenuConnectArena: TMenuItem
-        Caption = '???????(&A)'
+        Caption = 'Connect to the server (&A)'
         OnClick = MenuConnectArenaClick
       end
       object MenuDisconnect: TMenuItem
-        Caption = '??(&D)'
+        Caption = 'Disconnect (&D)'
         OnClick = MenuDisconnectClick
       end
       object MenuSep1: TMenuItem
         Caption = '-'
       end
       object MenuQuit: TMenuItem
-        Caption = '??(&Q)'
+        Caption = 'End (&Q)'
         OnClick = MenuQuitClick
       end
     end
     object MenuSetting: TMenuItem
-      Caption = '??(&S)'
+      Caption = 'Setting (&S)'
       object MenuSettingUser: TMenuItem
-        Caption = '??????(&U)'
+        Caption = 'User Configuration (&U)'
         OnClick = MenuSettingUserClick
       end
       object MenuSep2: TMenuItem
         Caption = '-'
       end
       object MenuClearConsole: TMenuItem
-        Caption = '?????????(&X)'
+        Caption = 'Clear the console (&X)'
         OnClick = MenuClearConsoleClick
       end
     end
     object MenuHelp: TMenuItem
-      Caption = '???(&H)'
+      Caption = 'Help (&H)'
       object MenuOnlineManual: TMenuItem
-        Caption = '??????????(&W)'
+        Caption = 'Online manual (&W)'
         OnClick = MenuOnlineManualClick
       end
       object MenuSep3: TMenuItem
         Caption = '-'
       end
       object MenuVersion: TMenuItem
-        Caption = '???????(&V)'
+        Caption = 'Version information (&V)'
         OnClick = MenuVersionClick
       end
     end
@@ -1893,8 +1894,8 @@ object MHPTunnelForm: TMHPTunnelForm
   end
   object TrayIcon: TTrayIcon
     Hint = 'MHP Tunnel'
-    BalloonHint = '???????'
-    BalloonTitle = '????'
+    BalloonHint = 'Balloon Tips'
+    BalloonTitle = 'Balloon'
     BalloonFlags = bfInfo
     Icon.Data = {
       0000010001001010000001002000680400001600000028000000100000002000
@@ -2089,15 +2090,15 @@ object MHPTunnelForm: TMHPTunnelForm
     Left = 248
     Top = 152
     object PopupCopy: TMenuItem
-      Caption = '???(&C)'
+      Caption = 'Copy (&C)'
       OnClick = PopupCopyClick
     end
     object PopupPaste: TMenuItem
-      Caption = '????(&P)'
+      Caption = 'Paste (&P)'
       OnClick = PopupPasteClick
     end
     object PopupPasteHTML: TMenuItem
-      Caption = 'HTML????(&H)'
+      Caption = 'HTML Paste (&H)'
       OnClick = PopupPasteHTMLClick
     end
   end

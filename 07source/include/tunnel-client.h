@@ -2,13 +2,13 @@
  * $Id: tunnel-client.h,v 1.13 2008/06/08 09:53:17 pensil Exp $
  * Copyright (c) 2008 Pensil - www.pensil.jp
  * 
- * MHP用 トンネルクライアント
+ * Tunnel client for MHP
  */
 
 #ifndef TUNNELCLIENT_H_
 #define TUNNELCLIENT_H_
 
-// DLLAPI宣言がなければ、これを定義 (お約束のようです)
+// If there is no declaration DLLAPI, definition (like a promise) to this
 #ifndef DLLAPI
 #define DLLAPI extern "C" __declspec(dllimport)
 #pragma comment (lib, "tunnel.lib")
@@ -46,7 +46,7 @@ struct COMMAND_RESULT
 #define TUNNEL_EVENT_RESULT    (int) 7
 #define TUNNEL_EVENT_ERROR     (int)-1
 
-// コールバック関数
+// The callback function
 typedef void (*tunnel_handler)(int eventType, int option, const char * logText);
 
 DLLAPI void _stdcall SetClientLogHandler(tunnel_handler handler);
