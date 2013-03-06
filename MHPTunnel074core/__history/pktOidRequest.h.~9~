@@ -1,0 +1,82 @@
+/*
+ * pktOidRequest.c - NDIS OID Request support module
+ *
+ * Copyright(c) 2005 Ryo Maruyama <ryo@jec.ac.jp> ALL RIGHTS RESERVED
+ */
+
+#ifndef __PKTOIDREQUEST_H
+#define __PKTOIDREQUEST_H
+
+#define _BITTYPES_H
+#define WIN32
+#include <winsock2.h>
+#include <ntddndis.h>
+#include <pcap.h>
+#include <packet32.h>
+//#include <ntddndis.h>
+
+typedef 
+UCHAR NDIS_802_11_MAC_ADDRESS[6];
+
+#ifndef __cplusplus
+extern "C" {
+#endif
+
+extern BOOLEAN
+	pktGetGenLinkSpeed(LPADAPTER ptrAdap, DWORD *ptrSpeed);
+extern BOOLEAN
+	pktGetGenConnectStatus(LPADAPTER ptrAdap, PNDIS_MEDIA_STATE ptrStat);
+extern BOOLEAN
+	pktGetGenPhysicalMedium(LPADAPTER ptrAdap, PNDIS_PHYSICAL_MEDIUM ptrMedia);
+extern BOOLEAN
+	pktGetGenVendorDesc(LPADAPTER ptrAdap, char *ptrDesc, int max);
+extern BOOLEAN
+	pktGet802_3MacAddress(LPADAPTER ptrAdap, UCHAR *ptrAddr);
+extern BOOLEAN
+	pktGet802_11BSSID(LPADAPTER ptrAdap, NDIS_802_11_MAC_ADDRESS ptrBssid);
+extern BOOLEAN
+	pktSet802_11BSSID(LPADAPTER ptrAdap, NDIS_802_11_MAC_ADDRESS ptrBssid);
+extern BOOLEAN
+	pktGet802_11SSID(LPADAPTER ptrAdap, PNDIS_802_11_SSID ptrSsid);
+extern BOOLEAN
+	pktSet802_11SSID(LPADAPTER ptrAdap, PNDIS_802_11_SSID ptrSsid);
+extern BOOLEAN
+	pktGet802_11RSSI(LPADAPTER ptrAdap, NDIS_802_11_RSSI *ptrRssi);
+extern BOOLEAN
+	pktGet802_11NetworkMode(LPADAPTER ptrAdap, PNDIS_802_11_NETWORK_INFRASTRUCTURE ptrMode);
+extern BOOLEAN
+	pktSet802_11NetworkMode(LPADAPTER ptrAdap, NDIS_802_11_NETWORK_INFRASTRUCTURE mode);
+extern BOOLEAN
+	pktGet802_11Configuration(LPADAPTER ptrAdap, PNDIS_802_11_CONFIGURATION ptrCfg);
+extern BOOLEAN
+	pktSet802_11Configuration(LPADAPTER ptrAdap, PNDIS_802_11_CONFIGURATION ptrCfg);
+extern BOOLEAN
+	pktGet802_11Statistics(LPADAPTER ptrAdap, PNDIS_802_11_STATISTICS ptrStat);
+extern BOOLEAN
+	pktExec802_11AddWEP(LPADAPTER ptrAdap, PNDIS_802_11_WEP ptrKey);
+extern BOOLEAN
+	pktExec802_11RemoveWEP(LPADAPTER ptrAdap, NDIS_802_11_KEY_INDEX);
+extern BOOLEAN
+	pktExec802_11Disassociate(LPADAPTER ptrAdap);
+extern BOOLEAN
+	pktGet802_11BSSIDList(LPADAPTER ptrAdap, PNDIS_WLAN_BSSID ptrList, int max);
+extern BOOLEAN
+	pktGet802_11AuthMode(LPADAPTER ptrAdap, PNDIS_802_11_AUTHENTICATION_MODE ptrMode);
+extern BOOLEAN
+	pktSet802_11AuthMode(LPADAPTER ptrAdap, NDIS_802_11_AUTHENTICATION_MODE mode);
+extern BOOLEAN
+	pktExec802_11BSSIDScan(LPADAPTER ptrAdap);
+extern BOOLEAN
+	pktGet802_11WEPStatus(LPADAPTER ptrAdap, PNDIS_802_11_WEP_STATUS ptrStat);
+extern BOOLEAN
+	pktSet802_11WEPStatus(LPADAPTER ptrAdap, NDIS_802_11_WEP_STATUS stat);
+
+#ifndef __cplusplus
+}
+#endif
+
+#endif /* __PKTOIDREQUEST_H */
+
+/*
+ * EOF
+ */

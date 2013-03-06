@@ -166,7 +166,7 @@ void __fastcall TConfigForm::Button2Click(TObject *Sender)
 		return;
 	}
 	if (GetAdapterStatus() < 3) {
-		MessageBox(this->Handle, "It is unable to connect to the PSP. \nPlease try again since the beginning of the meeting place.", "Test failed", MB_OK);
+		MessageBox(this->Handle, "It is unable to connect to the PSP.\nPlease try again since the beginning of the meeting place.", "Test failed", MB_OK);
 		return;
 	}
 	cmd.execute("/test");

@@ -2,7 +2,7 @@ object ConfigForm: TConfigForm
   Left = 183
   Top = 200
   BorderStyle = bsDialog
-  Caption = Setting
+  Caption = 'Setting'
   ClientHeight = 313
   ClientWidth = 456
   Color = clBtnFace

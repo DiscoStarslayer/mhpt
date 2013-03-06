@@ -5,12 +5,12 @@ TDS  = tunnel-client.tds tunnel-server.tds tunnel-common.tds
 EXE  = $(PROG).exe
 LIB  = cw32.lib import32.lib packet.lib wpcap.lib ws2_32.lib
 
-CC = /Borland/bcc55/Bin/bcc32
-CFLAGS = -I".\include" -v
-LD = /Borland/bcc55/Bin/ilink32
+CC = bcc32
+CFLAGS = -I"C:\Program Files\Borland\BDS\4.0\include" -I"C:\pcap\Include" -L"C:\pcap\convertedLib" -v
+LD = ilink32 -L"C:\Program Files\Borland\BDS\4.0\lib" -L"C:\pcap\convertedLib"
 LDFLAGS =
-RC = /Borland/bcc55/Bin/brcc32
-IPATH = /Borland/bcc55/include
+RC = brcc32
+IPATH = "C:\Program Files\Borland\BDS\4.0\include";"C:\pcap\Include"
 
 .SUFFIXES : .obj .c .cpp .h
 .SUFFIXES : .res .rc
@@ -22,14 +22,14 @@ ALL: TunnelSVR.exe tunnel.dll tunnel.lib tunnel.def
 #ALL: $(EXE)
 
 clean:
-	del $(OBJS) $(EXE) $(TDS) $(RES) *.ilc *.ild *.ils
+	del $(OBJS) $(EXE) $(TDS) $(RES) *.ilc *.ild *.ils *.lib *.obj *.exe *.dll
 
 .rc.res:
 	$(RC) -r -i$(IPATH) -fo$@ $<
 
 tunnel-client.obj: tunnel-client.cpp tunnel-common.h tunnel-client.h pktOidRequest.h
 	$(CC) $(CFLAGS) -o$@ -c tunnel-client.cpp
-	copy /Y  tunnel-client.h "..\MHPTunnelTCE\include"
+	copy /Y  tunnel-client.h "C:\Documents and Settings\Darren\My Documents\GitHub\mhpt\MPHTunnelTCE\include\"
 
 tunnel-client-cui.obj: tunnel-client-cui.cpp tunnel-client.h
 	$(CC) $(CFLAGS) -o$@ -c tunnel-client-cui.cpp
@@ -57,12 +57,12 @@ pktOidRequest.obj: pktOidRequest.cpp pktOidRequest.h
 tunnel.dll: tunnel-client.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj MakeHashAlgorithm.obj
 	$(LD) -v -Tpd c0d32x.obj tunnel-client.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj MakeHashAlgorithm.obj,tunnel.dll,,$(LIB),tunnel.def,
 	del *.tds *.ilf *.ilc *.ild *.ils *.map
-	copy /Y tunnel.dll "..\MHPTunnelTCE"
+	copy /Y tunnel.dll "C:\Documents and Settings\Darren\My Documents\GitHub\mhpt\MPHTunnelTCE\"
 
 tunnelsvr.dll: tunnel-server.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj MakeHashAlgorithm.obj
 	$(LD) -Tpd c0d32x.obj tunnel-server.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj MakeHashAlgorithm.obj,tunnelsvr.dll,,$(LIB),,
 	del *.tds *.ilf *.ilc *.ild *.ils *.map
-	copy /Y tunnelsvr.dll "..\MHPTunnelTCE"
+	copy /Y tunnelsvr.dll "C:\Documents and Settings\Darren\My Documents\GitHub\mhpt\MPHTunnelTCE\"
 
 #tunnel-client.dll: tunnel-client.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj MakeHashAlgorithm.obj
 #	$(LD) c0d32.obj tunnel-client.obj tunnel-common.obj pktOidRequest.obj,tunnel-client.dll,,$(LIB),,
@@ -70,11 +70,11 @@ tunnelsvr.dll: tunnel-server.obj tunnel-common.obj pktOidRequest.obj MakeMD5.obj
 
 tunnel.lib: tunnel.dll
 	implib -f tunnel.lib tunnel.dll
-	copy /Y tunnel.lib "..\MHPTunnelTCE\lib"
+	copy /Y tunnel.lib "C:\Documents and Settings\Darren\My Documents\GitHub\mhpt\MPHTunnelTCE\lib\"
 
 tunnelsvr.lib: tunnelsvr.dll
 	implib -f tunnelsvr.lib tunnelsvr.dll
-	copy /Y tunnelsvr.lib "..\MHPTunnelTCE\lib"
+	copy /Y tunnelsvr.lib "C:\Documents and Settings\Darren\My Documents\GitHub\mhpt\MPHTunnelTCE\lib\"
 
 tunnel.def: tunnel.dll
 	impdef tunnel.def tunnel.dll
